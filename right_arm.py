@@ -5,11 +5,11 @@
 #                                                   #
 #      to be used with left_arm and instructor      #
 #                                                   #
-#  			Control DENIRO right arm:				            #
+#  	      Control DENIRO right arm:		    #
 #            - Pick brick from pile                 #
 #            - Move brick to swap point             #
-#  			 - Trade brick with left arm                #
-#    					 							                        #
+#  	     - Trade brick with left arm            #
+#    					            #
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # brick dims: 0.2 x 0.09 x 0.062 metres
@@ -55,12 +55,12 @@ class RightArmControl(object):
         self._gripper = baxter_interface.Gripper(limb)
         self._iteration = 1		# which brick is picked up next
         self._start_angles = {	'right_w0': -0.67,
-        					  	        'right_w1': 1.03,
-        					  	        'right_w2': -0.50,
-        					  	        'right_e0': 1.19,
-                         	  	'right_e1': 1.94,
-                         	  	'right_s0': 0.08,
-                         	  	'right_s1': -1.00	}
+        			'right_w1': 1.03,
+        			'right_w2': -0.50,
+        			'right_e0': 1.19,
+                         	'right_e1': 1.94,
+                         	'right_s0': 0.08,
+                         	'right_s1': -1.00	}
         # create empty pose and angles index for calibration
         self._cpose = Pose()
         self._cpose_angles = {}
@@ -77,7 +77,7 @@ class RightArmControl(object):
     def interpret(self, data):
     	# read data and perform functions accordingly.
     	funcmap = {
-    #   variable_from_data : function_to_exectute
+       # variable_from_data : function_to_exectute
     	'calibrate' : self.calibrate,
     	'move to cpose' : self.move_to_cpose,
     	'open': self.gripper_open,
@@ -285,3 +285,4 @@ def listen():
 while not rospy.is_shutdown():
 	print("Right arm running...")
 	listen()
+
