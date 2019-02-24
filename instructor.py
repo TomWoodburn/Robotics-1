@@ -5,7 +5,7 @@
 #                                                   #
 #       Test functionality of individual arms       #
 #                  and run full demo                #
-#  			                           				          #
+#  			                            #
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # brick dims: 0.2 x 0.09 x 0.062 metres
