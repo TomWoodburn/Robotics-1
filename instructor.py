@@ -20,11 +20,6 @@ import rospkg
 
 from std_msgs.msg import String
 
-from gazebo_msgs.srv import (
-    SpawnModel,
-    DeleteModel,
-)
-
 from std_msgs.msg import (
     Header,
     Empty,
