@@ -72,8 +72,8 @@ def spawn_block_table():
     global model_list
 
     block_table_reference_frame="world"
-    block_table1_pose=Pose(position=Point(x=0.5, y=-1.22, z=0))
-    block_table2_pose=Pose(position=Point(x=0.5, y=0.02, z=0))
+    block_table1_pose=Pose(position=Point(x=0.5, y=-1.22, z=0.34))
+    block_table2_pose=Pose(position=Point(x=0.5, y=0.02, z=0.34))
 
 
     # Spawn Block table URDF
@@ -128,7 +128,7 @@ def delete_gazebo_models():
     except rospy.ServiceException, e:
         rospy.loginfo("Delete Model service call failed: {0}".format(e))
 
-def spawn_initial_stack(x=0.6725, y=0.1265, z=0.73, brick_reference_frame="world"):
+def spawn_initial_stack(x=0.6725, y=-0.5, z=0.73, brick_reference_frame="world"):
     bz = 0.062
     offset = 0.038
     height = z
@@ -143,7 +143,7 @@ def spawn_initial_stack(x=0.6725, y=0.1265, z=0.73, brick_reference_frame="world
         rospy.sleep(0.5)
 
     height = z
-    y = y+0.086+0.086
+    y = y-0.086-0.086
 
     for n in range(4):
         print (height+offset)
