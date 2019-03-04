@@ -5,10 +5,10 @@
 #                                                   #
 #     to be used with right_arm and instructor      #
 #                                                   #
-#  			Control DENIRO left arm:				            #
+#  		Control DENIRO left arm:    	    #
 #           - Move above structure area             #
-#  			    - Erect structure                       #
-#    					 							                        #
+#  	    - Erect structure                       #
+#    					 	    #
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # brick dims: 0.2 x 0.09 x 0.062 metres
@@ -55,12 +55,12 @@ class LeftArmControl(object):
         self._gripper = baxter_interface.Gripper(limb)
         self._iteration = 1		# which brick is picked up next
         self._start_angles = {	'left_w0': 0.837,
-        					  	'left_w1': 1.515,
-        					  	'left_w2': 1.933,
-        					  	'left_e0': -0.964,
-                         	  	'left_e1': 0.768,
-                         	  	'left_s0': 0.184,
-                         	  	'left_s1': -0.436   }
+        			'left_w1': 1.515,
+        			'left_w2': 1.933,
+        			'left_e0': -0.964,
+                         	'left_e1': 0.768,
+                         	'left_s0': 0.184,
+                         	'left_s1': -0.436   }
         self._close_angles = {  'left_w0': -1.1729,
                                 'left_w1': 1.9277,
                                 'left_w2': 2.2930,
