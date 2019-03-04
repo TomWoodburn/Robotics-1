@@ -23,4 +23,6 @@
      <mu1>1000</mu1>
      <mu2>1000</mu2>
   </gazebo>
+  <gazebo>
+    <static>true</static>
 </robot>
