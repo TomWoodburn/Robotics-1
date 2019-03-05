@@ -7,10 +7,10 @@
 #                                                   #
 #     to be used with right_arm and instructor      #
 #                                                   #
-#  			Control DENIRO left arm:				#
+#  			Control DENIRO left arm:    #
 #            - Move above structure area            #
-#  			 - Erect structure                      #
-#    					 							#
+#  			 - Erect structure          #
+#    					 	    #
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # brick dims: 0.2 x 0.09 x 0.062 metres
