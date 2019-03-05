@@ -1,0 +1,29 @@
+<robot name="table">
+  <link name="table">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" />
+      <mass value="100" />
+      <inertia  ixx="10" ixy="0.0"  ixz="0.0"  iyy="10"  iyz="0.0"  izz="10" />
+    </inertial>
+    <visual>
+      <origin xyz="0.3 0.6 0.0"/>
+      <geometry>
+        <box size="0.6 1.2 0.73" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0.3 0.6 0.0"/>
+      <geometry>
+        <box size="0.6 1.2 0.73" />
+      </geometry>
+    </collision>
+  </link>
+  <gazebo reference="block">
+    <material>Gazebo/white</material>
+     <mu1>1000</mu1>
+     <mu2>1000</mu2>
+  </gazebo>
+  <gazebo>
+    <static>true</static>
+  </gazebo>
+</robot>
