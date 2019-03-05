@@ -61,27 +61,27 @@ class RightArmControl(object):
         self._gripper.set_moving_force(90)
         self._gripper.set_holding_force(90)
         self._iteration = 0		# which brick is picked up next
-        self._start_angles = {  'right_s0': 0.417965,
-                                'right_s1': -1.274320,
-                                'right_w0': -0.00600870,
-                                'right_w1': 1.09790,
-                                'right_w2': -0.351385,
-                                'right_e0': -0.01258010,
-                                'right_e1': 1.733405    }
-        self._h_pass_angles = {	'right_w0': 0.0091,
-        					  	'right_w1': 0.7613,
-        					  	'right_w2': 1.7880,
-        					  	'right_e0': 1.7763,
-                         	  	'right_e1': 2.0754,
-                         	  	'right_s0': -0.4816,
-                         	  	'right_s1': 0.0840     }
-        self._v_pass_angles = {	'right_w0': -0.6456,
-        					  	'right_w1': 2.0749,
-        					  	'right_w2': 2.5661,
-        					  	'right_e0': 1.7883,
-                         	  	'right_e1': 1.1032,
-                         	  	'right_s0': 0.3027,
-                         	  	'right_s1': -1.0007    }
+        self._start_angles = {  'right_s0': 0.18131168311321932,
+                                'right_s1': -1.0016043603557936,
+                                'right_w0': 0.022976266499086684,
+                                'right_w1': 1.2151395716227027,
+                                'right_w2': -0.6191932160319986,
+                                'right_e0': -0.05272975195082763,
+                                'right_e1': 1.338372395790664   }
+        self._h_pass_angles = { 'right_s0': 0.16704773675001494,
+                                'right_s1': -1.070536157253592,
+                                'right_w0': 1.2793069313987573,
+                                'right_w1': 1.494186105512508,
+                                'right_w2': 0.6510857211494168,
+                                'right_e0': 0.4939219022376884,
+                                'right_e1': 2.0679031146659614}
+        self._v_pass_angles = { 'right_s0': -0.12053726662685094,
+                                'right_s1': -0.8646772979974182,
+                                'right_w0': -0.7067659815851988,
+                                'right_w1': 1.8657991319074547,
+                                'right_w2': -0.7915199212,
+                                'right_e0': 1.8567301606995321,
+                                'right_e1': 1.4229690844004566  }
         self._hover_angles = None
         # create empty pose and angles index for calibration
         self._cpose = Pose()
