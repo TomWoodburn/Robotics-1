@@ -7,11 +7,11 @@
 #                                                   #
 #      to be used with left_arm and instructor      #
 #                                                   #
-#  			Control DENIRO right arm:				#
-#            - Pick brick from pile                 #
-#            - Move brick to swap point             #
-#  			 - Trade brick with left arm            #
-#    					 							#
+#  		Control DENIRO right arm:	    #
+#         - Pick brick from pile                    #
+#         - Move brick to swap point                #
+#  	  - Trade brick with left arm               #
+#    					 	    #
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # brick dims: 0.2 x 0.09 x 0.062 metres
