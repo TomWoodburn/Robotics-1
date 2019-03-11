@@ -7,7 +7,7 @@
 #   to be used with right_arm_sim and instructor    #
 #	   and run on top of spawn_solo.py	    #
 #						    #
-#  	       Control DENIRO left arm	    	    #
+#  	       Control BAXTER left arm	    	    #
 #           - Move above structure area             #
 #  	    - Build structure           	    #
 #    					 	    #
