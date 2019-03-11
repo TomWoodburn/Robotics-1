@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#                    left_arm.py                    #
-#                                                   #
-#     to be used with right_arm and instructor      #
-#                                                   #
-#  			Control DENIRO left arm	    #
-#            - Move above structure area            #
-#  			 - Erect structure          #
+#                   left_arm_sim.py                 #
+#		SIMULATION VERSION ONLY             #             
+#						    #
+#   to be used with right_arm_sim and instructor    #
+#	   and run on top of spawn_solo.py	    #
+#						    #
+#  	       Control DENIRO left arm	    	    #
+#           - Move above structure area             #
+#  	    - Build structure           	    #
 #    					 	    #
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
