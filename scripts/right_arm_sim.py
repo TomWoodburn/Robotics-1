@@ -1,15 +1,17 @@
 #!/usr/bin/env python
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#                   right_arm.py                    #
-#                                                   #
-#      to be used with left_arm and instructor      #
-#                                                   #
-#  			Control DENIRO right arm:				#
-#            - Pick brick from pile                 #
-#            - Move brick to swap point             #
-#  			 - Trade brick with left arm            #
-#    					 							#
+#                   right_arm_sim.py                #
+#              SIMULATION VERSION ONLY              #
+#						    #
+#    to be used with left_arm_sim and instructor    #
+#         and run on top of spawn_solo.py           #
+#  						    #
+#	       Control BAXTER right arm:	    #
+#           - Pick brick from pile                  #
+#           - Move brick to swap point              #
+#  	    - Trade brick with left arm             #
+#    					 	    #
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # brick dims: 0.2 x 0.09 x 0.062 metres
