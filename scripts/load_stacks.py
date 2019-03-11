@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#                  model_manage.py                  #
+#                   load_stacks.py                  #
 #                                                   #
 #       Test functionality of individual arms       #
 #                  and run full demo                #
