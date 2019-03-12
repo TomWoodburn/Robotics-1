@@ -1,11 +1,8 @@
-***********
-Calibration
-***********
+*****************************
+Preparing the Virtual Machine
+*****************************
 
 The best performance in the simulation was achieved using the Baxter Robot environment, instead of the ROBOT DE NIRO environment. The Baxter Robot environment runs on the ROBOT DE NIRO virtual machine. 
-
-Method
-======
 
 1. Download Software to Run Virtual Machines 
 ============================================
@@ -23,15 +20,19 @@ https://imperialcollegelondon.app.box.com/s/j78jcfiy1z08tw8ck3m6cwn24qgpffek/fol
 Once downloaded, extract DE_NIRO.zip and open up the VM in VMWare Workstation.
 
 It's recommended to turn on "3D acceleration" of the VM in
+
 ::
  VM -> Settings -> Display -> 3D acceleration checkbox
-::
+
+:
 
 Run the VM, and log in using 
+
 ::
  *user* robin
  *pass* deniro
-::
+ 
+:
 
 3. Complete Baxter Workstation Setup 
 ====================================
@@ -99,11 +100,11 @@ Now the tricky bit. Half your screen with the left showing VMWare and the right 
 
 ::
 
- Merge folder “launch?" > yes, "Merge"
+ Merge folder "launch?" > yes, "Merge"
 
- Replace file “model.urdf?" > "Replace"
+ Replace file "model.urdf?" > "Replace"
 
- Replace file “right_arm.py?" > "Replace"
+ Replace file "right_arm.py?" > "Replace"
 
 ::
 
