@@ -1,6 +1,6 @@
-***************************************************
-DE3-ROB1 Multi Arm Construction Group Documentation
-***************************************************
+**********************************************
+DE3-ROB1 Multi Arm Construction Documentation
+**********************************************
 
 About
 =====
@@ -9,8 +9,8 @@ This is the documentation for the group Multi Arm Construction Project for the R
 
 The project is hosted on GitHub: https://github.com/bencobley/Robotics-1.
 
-The Authors
------------
+Authors
+-------
 
 * Ben Cobley
 * James Krasucki
@@ -27,10 +27,10 @@ The goal of this project was to create a fully automated robot that can pass bri
 
 The project includes:
 
-* Forward and Inverse Kinematics: To use the 7-dof kinematic model for Cartesian-to-Joint space mapping.
-* Redundancy Resolution: To resolve the 7-dof arm configuration to minimise excessive joint movements.
-* Motion Planning: Key positions recorded to ensure safe motion between poses.
-* End-Effector control: To control the grasping with the 2 fingers of the hand.
+* *Forward and Inverse Kinematics*: To use the 7-dof kinematic model for Cartesian-to-Joint space mapping.
+* *Redundancy Resolution*: To resolve the 7-dof arm configuration to minimise excessive joint movements.
+* *Motion Planning*: Key positions recorded to ensure safe motion between poses.
+* *End-Effector control*: To control the grasping with the 2 fingers of the hand.
 
 Future improvements to the project could include a final implementation of automated calibration as well as a smoother, more continuous trajectory. Additionally, the structure the robot picks up from and builds can be optimised. Overall, the main aims of this project were successfully achieved. The robot is faster than a child at picking up, swapping hands and placing the bricks in a structure.
 
@@ -43,18 +43,8 @@ This documentation covers the installation, running and operation of the Multi A
 Contents
 ========
 
-Contents:
-
 .. toctree::
    :maxdepth: 2
    :glob:
 
    *
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
