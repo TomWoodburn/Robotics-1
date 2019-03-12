@@ -49,9 +49,10 @@ This documentation covers the installation, running and operation of the Multi A
 
 .. toctree::
    :maxdepth: 2
-   :caption: Architecture
+   :caption: Operation
 
    architecture
+   calibration
    sequence
    otherfunctions
    simulationproblems

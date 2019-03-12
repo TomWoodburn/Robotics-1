@@ -2,8 +2,8 @@
 Algorithm Architecture
 **********************
 
-Node Funtionality
-=================
+Node Functionality
+==================
 
 
 Our algorithm is broken down into a number of key nodes:
@@ -74,4 +74,4 @@ In instructor.py we define a dictionary of commands for the right and left arms.
     		9: 'grab brick',
     		10: 'manual move',
     		11: 'angles'
-		}
+		}	
