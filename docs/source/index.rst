@@ -47,6 +47,7 @@ Contents
    :maxdepth: 2
    :caption: Setup
 
+   virtualmachine
    initialisation
 
 .. toctree::
@@ -58,9 +59,10 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   :caption: Submissions
+   :caption: Appendices
 
    videos
+   readthedocs
 
 Indices and tables
 ==================
