@@ -54,13 +54,13 @@ class LeftArmControl(object):
         self._limb = baxter_interface.Limb(limb)
         self._gripper = baxter_interface.Gripper(limb)
         self._iteration = 1		# which brick is picked up next
-        self._start_angles = {	'left_w0': 0.837,
-        			'left_w1': 1.515,
-        			'left_w2': 1.933,
-        			'left_e0': -0.964,
-                         	'left_e1': 0.768,
-                         	'left_s0': 0.184,
-                         	'left_s1': -0.436   }
+        self._start_angles = {	'left_w0': 0.8359511395557195,
+                                'left_w1': 1.4956828701842522,
+                                'left_w2': 1.6171889370762083,
+                                'left_e0': -0.9677303270823394,
+                                'left_e1': 0.8213818151267747,
+                                'left_s0': -0.08603077329959152,
+                                'left_s1': -0.45427309912761693   }
         self._close_angles = {  'left_w0': -1.1729,
                                 'left_w1': 1.9277,
                                 'left_w2': 2.2930,
@@ -205,7 +205,7 @@ class LeftArmControl(object):
      	# hoverbrick pose is a short distance above the brick
      	neutralpose.position.x = calibrationpose['position'].x - self._hover_distance
      	neutralpose.position.y = calibrationpose['position'].y
-     	neutralpose.position.z = calibrationpose['position'].z + 3*self._hover_distance
+     	neutralpose.position.z = calibrationpose['position'].z + self._hover_distance
         neutralpose.orientation.x = 1
         neutralpose.orientation.y = 1
         neutralpose.orientation.z = 0
@@ -215,50 +215,49 @@ class LeftArmControl(object):
      	self._guarded_move_to_joint_position(joint_angles)
         self._hover_pose = neutralpose
 
-    def placebrick(self, calibrationpose=None, bx = 0.2, by = 0.09, bz=0.062):
-    	if calibrationpose is None:
-    		calibrationpose = self._cpose
-    	# collect the brick - iteration determines position
-    	brickdict = {
+    def placebrick(self, bx = 0.2, by = 0.09, bz=0.062):
+        calibrationpose = self._cpose
+        print("Placing brick #{}".format(self._iteration))
+        # collect the brick - iteration determines position
+        brickdict = {
    #brick : [xpos, ypos, zpos, xor, yor, zor, wor]
-    	1 : [0, -0.9*bx , bx       ],               
-    	2 : [0, 0       , bx       ],     
-    	3 : [0, 0.9*bx  , bx       ],          
-    	4 : [0, -0.52*bx, bx+bz    ],          
-    	5 : [0, 0.52*bx , bx+bz    ],  
-    	6 : [0, -0.52*bx, 2*bx+bz  ],  
-    	7 : [0, 0.52*bx , 2*bx+bz  ],
-    	8 : [0, 0       , 2*bx+2*bz]
-    	}
-    	# do not continue if al 8 bricks have been moved
-    	if self._iteration > 8:
-    		rospy.logerr('Reading all 8 bricks have been placed...')
-    		return
+        1 : [0, -1.80*bx , 0.6*bx     ],               
+        2 : [0, -1.35*bx , 0.6*bx     ],     
+        3 : [0, -0.90*bx , 0.6*bx     ],          
+        4 : [0, -0.45*bx , 0.6*bx     ],          
+        5 : [0,  0       , 0.6*bx     ],  
+        6 : [0, -1.33*bx , 0.8*bx+bz  ],  
+        7 : [0, -0.26*bx , 0.8*bx+bz  ],
+        8 : [0, -0.72*bx , 0.8*bx+2.2*bz]
+        }
+        # do not continue if al 8 bricks have been moved
+        if self._iteration > 8:
+            rospy.logerr('Reading all 8 bricks have been placed...')
+            return
         self.hoverplace()
-    	brickpose = Pose()
-    	# determine brick location based on calibrationpose and brick dictionary
-    	brickpose.position.x = calibrationpose['position'].x
-    	brickpose.position.y = calibrationpose['position'].y + brickdict[self._iteration][1]
-    	brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2] + 0.1
-     	brickpose.orientation.x = 1
+        brickpose = Pose()
+        # determine brick location based on calibrationpose and brick dictionary
+        brickpose.position.x = calibrationpose['position'].x + brickdict[self._iteration][0]
+        brickpose.position.y = calibrationpose['position'].y + brickdict[self._iteration][1]
+        brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2] + 0.1
+        brickpose.orientation.x = 1
         brickpose.orientation.y = 1
         brickpose.orientation.z = 0
         brickpose.orientation.w = 0
-    	joint_angles = self.ik_request(brickpose)
-    	self._guarded_move_to_joint_position(joint_angles)
+        joint_angles = self.ik_request(brickpose)
+        self._guarded_move_to_joint_position(joint_angles)
+        if self._sequence:
+            pub.publish('brick_placed')
         brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2]
         joint_angles = self.ik_request(brickpose)
         self._guarded_move_to_joint_position(joint_angles)
-    	self._gripper.open()
-    	rospy.sleep(1.0)
+        self._gripper.open()
         brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2] + 0.1
         joint_angles = self.ik_request(brickpose)
         self._guarded_move_to_joint_position(joint_angles)
-    	# return to calibration position
-    	self.hoverplace()
-    	# inform left arm that brick has been taken if running full sequence
-    	if self._sequence:
-    		pub.publish('brick placed')
+        # return to calibration position
+        self.hoverplace()
+        # inform left arm that brick has been taken if running full sequence
 
     def movenearcenter(self):
     	# move brick to central position to be obtained by arm
