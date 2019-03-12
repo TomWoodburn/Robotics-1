@@ -69,7 +69,7 @@ class RightArmControl(object):
         			'right_e0': 1.7763,
                          	'right_e1': 2.0754,
                          	'right_s0': -0.4816,
-                         	'right_s1': --0.0840	}
+                         	'right_s1': -0.0840	}
         self._v_pass_angles = {	'right_w0': -0.6456,
         			'right_w1': 2.0749,
         			'right_w2': 2.5661,
@@ -221,11 +221,10 @@ class RightArmControl(object):
     	2 : [0, 0 	   , -1.7*brick_z],
     	3 : [0, 0	   , -2.7*brick_z],
     	4 : [0, 0	   , -3.7*brick_z],
-    	5 : [0, 0	   , -4.7*brick_z],
-    	5 : [0, -2*brick_y , -1.7*brick_z],
-    	6 : [0, -2*brick_y , -2.7*brick_z],
-    	7 : [0, -2*brick_y , -3.7*brick_z],
-    	8 : [0, -2*brick_y , -4.7*brick_z]
+    	5 : [0, -2*brick_y , -0.7*brick_z],
+    	6 : [0, -2*brick_y , -1.7*brick_z],
+    	7 : [0, -2*brick_y , -2.7*brick_z],
+    	8 : [0, -2*brick_y , -3.7*brick_z]
     	}
     	self._gripper.open()
     	rospy.sleep(1.0)
@@ -267,10 +266,10 @@ class RightArmControl(object):
 
     def movetocenter(self):
     	# move brick to central position to be obtained by arm
-    	if self._iteration in [1, 2, 3, 6, 7, 9]:
+    	if self._iteration in [1, 2, 3, 4, 5]:
     		# bricks to be placed vertically
     		joint_angles = self._v_pass_angles
-    	elif self._iteration in [4, 5, 8]:
+    	elif self._iteration in [6, 7, 8]:
     		# brick to be placed horizontally
     		joint_angles = self._h_pass_angles
     	# inform left arm that brick is in position if running full sequence
