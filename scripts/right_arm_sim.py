@@ -136,7 +136,6 @@ class RightArmControl(object):
         print('Moving the {0} arm to start pose...'.format(self._limb_name))
         self._guarded_move_to_joint_position(start_angles)
         self.gripper_open()
-        rospy.sleep(1.0)
 
     def move_to_cpose(self):
     	# Move to start pos for calibration
@@ -192,7 +191,7 @@ class RightArmControl(object):
 
     def gripper_close(self):
         self._gripper.close()
-        rospy.sleep(1.0)
+        rospy.sleep(2.0)
 
     def hoverbrick(self):
     	print("Moving to neutral position above brick pile")
@@ -222,7 +221,6 @@ class RightArmControl(object):
     	self._iteration += 1
     	# collect the brick - iteration determines position
     	self._gripper.open()
-    	rospy.sleep(1.0)
     	# do not continue if al 8 bricks have been moved
     	if self._iteration > 8:
     		rospy.logerr('Reading all 8 bricks have been collected...')
@@ -241,7 +239,6 @@ class RightArmControl(object):
     	joint_angles = self.ik_request(brickpose)
     	self._guarded_move_to_joint_position(joint_angles)
     	self._gripper.close()
-    	rospy.sleep(1.0)
     	# return to hover position
     	self.hoverbrick()
     	# inform left arm that brick has been taken if running full sequence
@@ -267,7 +264,6 @@ class RightArmControl(object):
     def releasebrick(self):
     	# let go of brick once held by left arm
     	self.gripper_open()
-    	rospy.sleep(1.0)
     	# withdraw arm away from center
     	current_pose = self._limb.endpoint_pose()
     	newpose = Pose()
@@ -280,7 +276,6 @@ class RightArmControl(object):
         newpose.orientation.w = current_pose['orientation'].w
     	joint_angles = self.ik_request(newpose)
     	self._guarded_move_to_joint_position(joint_angles)
-    	rospy.sleep(1.0)
     	# inform left arm that brick has been released if running full sequence
     	if self._sequence:
     		pub.publish('brick_released')
@@ -306,12 +301,13 @@ class RightArmControl(object):
 
     def begin_sequence(self):
     	print("BEGINNING FULL DEMO")
+        pub.publish('starting_demo')
     	self._sequence = True
     	self._iteration = 0
     	self.pickbrick()
 
 
-rospy.init_node('right_arm', anonymous=True)
+rospy.init_node('right_arm', anonymous=False)
 
 rospy.wait_for_message('/robot/sim/started', Empty)
 
