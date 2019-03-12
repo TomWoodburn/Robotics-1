@@ -13,6 +13,15 @@ left_arm.py - class for Baxter’s left arm and a set of functions.
 
 Spawning - a number of scripts for spawning various objects into the gazebo environment (just for simulation)
 
+================  ============================================================
+Nodes             Function
+================  ============================================================
+instructor.py     Used to test the functionality of each arm and run the full demo. In 		          instructor we define two dictionaries that define core functionalities 		  of the arms in terms of messages that can be posted to topics. 
+right_arm.py      class for Baxter’s right arm and a set of functions.
+left_arm.py       class for Baxter’s left arm and a set of functions.
+spawning          A number of scripts for spawning various objects into the gazebo 			  environment (just for the simulation)
+================  ============================================================
+
 
 Summary of algorithm
 ====================
