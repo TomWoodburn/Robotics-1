@@ -237,8 +237,8 @@ class LeftArmControl(object):
     	4 : [0.1, -0.45*bx , 0.6*bx     ],          
     	5 : [0.1,  0       , 0.6*bx     ],  
     	6 : [0.1, -1.33*bx , 0.7*bx+bz  ],  
-    	7 : [0.1, -0.33*bx , 0.7*bx+bz  ],
-    	8 : [0.1, -0.60*bx , 0.7*bx+2*bz]
+    	7 : [0.1, -0.26*bx , 0.7*bx+bz  ],
+    	8 : [0.1, -0.72*bx , 0.7*bx+2.3*bz]
     	}
     	# do not continue if al 8 bricks have been moved
     	if self._iteration > 8:
@@ -365,4 +365,3 @@ def listen():
 while not rospy.is_shutdown():
 	print("Left arm running...")
 	listen()
-
