@@ -324,8 +324,6 @@ class LeftArmControl(object):
 
 rospy.init_node('left_arm', anonymous=True)
 
-rospy.wait_for_message('/robot/sim/started', Empty)
-
 pub = rospy.Publisher('left_status', String, queue_size=5)
 
 # initialise left arm
