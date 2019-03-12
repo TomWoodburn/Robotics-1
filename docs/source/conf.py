@@ -179,13 +179,4 @@ epub_title = project
 epub_exclude_files = ['search.html']
 
 
-# BEN ADDED MARKDOWN ACCESS
-
-from recommonmark.parser import CommonMarkParser
-
-source_parsers = {
-    '.md': CommonMarkParser,
-}
-
-source_suffix = ['.rst', '.md']
 
