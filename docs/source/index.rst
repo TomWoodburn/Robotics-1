@@ -45,6 +45,31 @@ Contents
 
 .. toctree::
    :maxdepth: 2
-   :glob:
+   :caption: Setup
 
-   *
+   initialisation
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Architecture
+
+   architecture
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Simulation
+
+   simulationproblems
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Submissions
+
+   videos
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
