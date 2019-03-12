@@ -61,27 +61,27 @@ class RightArmControl(object):
         self._gripper.set_moving_force(90)
         self._gripper.set_holding_force(90)
         self._iteration = 0		# which brick is picked up next
-        self._start_angles = {  'right_s0': 0.18131168311321932,
-                                'right_s1': -1.0016043603557936,
-                                'right_w0': 0.022976266499086684,
-                                'right_w1': 1.2151395716227027,
-                                'right_w2': -0.6191932160319986,
-                                'right_e0': -0.05272975195082763,
-                                'right_e1': 1.338372395790664   }
-        self._h_pass_angles = { 'right_s0': -0.004429034804837251,
-                                'right_s1': -1.149947770568719,
-                                'right_w0': 1.1681167986671221,
-                                'right_w1': 1.747705329832261,
-                                'right_w2': 0.83886015545,
-                                'right_e0': 0.4372348413838414,
-                                'right_e1': 1.9127625213615964  }
-        self._v_pass_angles = { 'right_s0': -0.12053726662685094,
-                                'right_s1': -0.8646772979974182,
-                                'right_w0': -0.7067659815851988,
-                                'right_w1': 1.8657991319074547,
-                                'right_w2': -0.7915199212,
-                                'right_e0': 1.8567301606995321,
-                                'right_e1': 1.4229690844004566  }
+        self._start_angles = {  'right_s0': 0.19194192950377786,
+                                'right_s1': -0.4300336661388311,
+                                'right_w0': 0.0412353893921642,
+                                'right_w1': 0.6860390155959699,
+                                'right_w2': -0.5985258112031371,
+                                'right_e0': -0.037674601862013546,
+                                'right_e1': 1.2950341401339145   }
+        self._h_pass_angles = { 'right_s0': 0.002824106358810141,
+                                'right_s1': -1.0514117177590556,
+                                'right_w0': 1.102326282212558,
+                                'right_w1': 1.70459523735878,
+                                'right_w2': 0.7332560190418596,
+                                'right_e0': 0.4105871371295322,
+                                'right_e1': 1.9241090653363315  }
+        self._v_pass_angles = { 'right_s0': -0.17455188835565316,
+                                'right_s1': -0.7671991859344809,
+                                'right_w0': -0.7748709352937055,
+                                'right_w1': 1.572464837389778,
+                                'right_w2': -0.7227189655500057,
+                                'right_e0': 1.739379551281571,
+                                'right_e1': 1.735157459717211  }
         self._hover_angles = None
         # create empty pose and angles index for calibration
         self._cpose = Pose()
@@ -224,8 +224,8 @@ class RightArmControl(object):
     	self._gripper.open()
     	rospy.sleep(1.0)
     	# do not continue if al 8 bricks have been moved
-    	if self._iteration > 9:
-    		rospy.logerr('Reading all 9 bricks have been collected...')
+    	if self._iteration > 8:
+    		rospy.logerr('Reading all 8 bricks have been collected...')
     		return
     	# move above second stack if second group of 4 bricks
     	print('Collecting brick #{0} from pile'.format(self._iteration))
@@ -251,10 +251,10 @@ class RightArmControl(object):
 
     def movetocenter(self):
     	# move brick to central position to be obtained by arm
-    	if self._iteration in [1, 2, 3, 6, 7, 9]:
+    	if self._iteration in [1, 2, 3, 4, 5]:
             # bricks to be placed vertically
             self._guarded_move_to_joint_position(self._v_pass_angles)
-        elif self._iteration in [4, 5, 8]:
+        elif self._iteration in [6, 7, 8]:
             # bricks to be placed horizontally
             self._guarded_move_to_joint_position(self._h_pass_angles)
     	else:
@@ -273,7 +273,7 @@ class RightArmControl(object):
     	newpose = Pose()
         newpose.position.x = current_pose['position'].x
         newpose.position.y = current_pose['position'].y #- self._hover_distance
-        newpose.position.z = current_pose['position'].z + 0.5*self._hover_distance
+        newpose.position.z = current_pose['position'].z + 0.7*self._hover_distance
         newpose.orientation.x = current_pose['orientation'].x
         newpose.orientation.y = current_pose['orientation'].y
         newpose.orientation.z = current_pose['orientation'].z
