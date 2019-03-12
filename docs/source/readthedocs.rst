@@ -27,16 +27,16 @@ For *Windows*
 
 .. code-block:: bash
 
-    cd #Change directory
-    dir #List contents
+    cd # Change directory
+    dir # List contents
 
 
 For *Unix operating systems*
 
 .. code-block:: bash
 
-    cd #Change directory
-    ls #List contents
+    cd # Change directory
+    ls # List contents
 
 
 Check its clean by running:

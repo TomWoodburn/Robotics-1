@@ -40,9 +40,6 @@ Documentation
 This documentation covers the installation, running and operation of the Multi Arm Construction project code with DeNiro. For further questions or troubleshooting contact the Authors above. 
 
 
-Contents
-========
-
 .. toctree::
    :maxdepth: 2
    :caption: Setup
@@ -55,6 +52,7 @@ Contents
    :caption: Architecture
 
    architecture
+   Demo
    simulationproblems
 
 .. toctree::

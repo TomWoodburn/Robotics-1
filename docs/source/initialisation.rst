@@ -91,6 +91,7 @@ Once the left_arm, right_arm and spawn_single nodes have been initialised in sep
 12. In the 1st (right arm) terminal when prompted to input another command , enter ‘2’ to begin the complete demo.
 
 	.. code-block:: bash
+	
 		ENTER COMMAND: 
 		2
 
