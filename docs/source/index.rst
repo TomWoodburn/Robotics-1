@@ -52,7 +52,8 @@ This documentation covers the installation, running and operation of the Multi A
    :caption: Architecture
 
    architecture
-   Demo
+   sequence
+   otherfunctions
    simulationproblems
 
 .. toctree::
