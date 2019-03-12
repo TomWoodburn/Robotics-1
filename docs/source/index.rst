@@ -26,6 +26,7 @@ Summary
 The goal of this project was to create a fully automated robot that can pass bricks from one hand to the other by applying code to the DeNiro Robot. It had to achieve this at a speed faster than a child could perform the task. The project was written in Python and ROS was used to interface with the modified Baxter robot.
 
 The project includes:
+
 * Forward and Inverse Kinematics: To use the 7-dof kinematic model for Cartesian-to-Joint space mapping.
 * Redundancy Resolution: To resolve the 7-dof arm configuration to minimise excessive joint movements.
 * Motion Planning: Key positions recorded to ensure safe motion between poses.
