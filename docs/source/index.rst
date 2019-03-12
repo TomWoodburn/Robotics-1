@@ -54,11 +54,6 @@ Contents
    :caption: Architecture
 
    architecture
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Simulation
-
    simulationproblems
 
 .. toctree::
