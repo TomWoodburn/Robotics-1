@@ -58,13 +58,13 @@ class LeftArmControl(object):
         self._gripper.set_moving_force(100)
         self._gripper.set_holding_force(100)
         self._iteration = 1		# which brick is picked up next
-        self._start_angles = {  'left_w0': 0.1751277591860978,
-                                'left_w1': 1.0348778992361742,
-                                'left_w2': 1.6480643643646378,
-                                'left_e0': -0.32423043722495226,
-                                'left_e1': 1.6417861302473806,
-                                'left_s0': -0.3210703887329718,
-                                'left_s1': -1.0775690995657294  }
+        self._start_angles = {  'left_w0': 0.533499696708569,
+                                'left_w1': 0.7799868910407755,
+                                'left_w2': 1.6375448325562694,
+                                'left_e0': -0.39941915884883983,
+                                'left_e1': 1.2338767018085592,
+                                'left_s0': -0.17534067501871142,
+                                'left_s1': -0.33760908632608366  }
         self._close_angles = {  'left_w0': -1.1729,
                                 'left_w1': 1.9277,
                                 'left_w2': 2.2930,
@@ -215,7 +215,7 @@ class LeftArmControl(object):
      	# hoverbrick pose is a short distance above the brick
      	neutralpose.position.x = calibrationpose['position'].x - self._hover_distance
      	neutralpose.position.y = calibrationpose['position'].y
-     	neutralpose.position.z = calibrationpose['position'].z + 2*self._hover_distance
+     	neutralpose.position.z = calibrationpose['position'].z + 2.5*self._hover_distance
         neutralpose.orientation.x = 1
         neutralpose.orientation.y = 1
         neutralpose.orientation.z = 0
@@ -231,14 +231,14 @@ class LeftArmControl(object):
     	# collect the brick - iteration determines position
     	brickdict = {
    #brick : [xpos, ypos, zpos, xor, yor, zor, wor]
-    	1 : [0.15, -0.9*bx , 0.6*bx       ],               
-    	2 : [0.15, 0       , 0.6*bx       ],     
-    	3 : [0.15, 0.9*bx  , 0.6*bx       ],          
-    	4 : [0.15, -0.55*bx, 0.6*bx+bz    ],          
-    	5 : [0.15, 0.55*bx , 0.6*bx+bz    ],  
-    	6 : [0.15, -0.55*bx, 1.2*bx+bz  ],  
-    	7 : [0.15, 0.55*bx , 1.2*bx+bz  ],
-    	8 : [0.15, 0       , 1.2*bx+2*bz]
+    	1 : [0.1, -1.80*bx , 0.6*bx     ],               
+    	2 : [0.1, -1.35*bx , 0.6*bx     ],     
+    	3 : [0.1, -0.90*bx , 0.6*bx     ],          
+    	4 : [0.1, -0.45*bx , 0.6*bx     ],          
+    	5 : [0.1,  0       , 0.6*bx     ],  
+    	6 : [0.1, -1.33*bx , 0.7*bx+bz  ],  
+    	7 : [0.1, -0.33*bx , 0.7*bx+bz  ],
+    	8 : [0.1, -0.60*bx , 0.7*bx+2*bz]
     	}
     	# do not continue if al 8 bricks have been moved
     	if self._iteration > 8:
@@ -249,21 +249,21 @@ class LeftArmControl(object):
     	# determine brick location based on calibrationpose and brick dictionary
     	brickpose.position.x = calibrationpose['position'].x + brickdict[self._iteration][0]
     	brickpose.position.y = calibrationpose['position'].y + brickdict[self._iteration][1] - 0.1
-    	brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2] + 0.1
+    	brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2] + 0.2
      	brickpose.orientation.x = 1
         brickpose.orientation.y = 1
         brickpose.orientation.z = 0
         brickpose.orientation.w = 0
     	joint_angles = self.ik_request(brickpose)
     	self._guarded_move_to_joint_position(joint_angles)
+        if self._sequence:
+            pub.publish('brick_placed')
         brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2]
         joint_angles = self.ik_request(brickpose)
         self._guarded_move_to_joint_position(joint_angles)
     	self._gripper.open()
     	rospy.sleep(1.0)
-        if self._sequence:
-            pub.publish('brick_placed')
-        brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2] + 0.1
+        brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2] + 0.2
         joint_angles = self.ik_request(brickpose)
         self._guarded_move_to_joint_position(joint_angles)
     	# return to calibration position
@@ -276,7 +276,7 @@ class LeftArmControl(object):
         centerpose = Pose()
         centerpose.position.x = 0.55
         centerpose.position.y = 0
-        centerpose.position.z = 0.4
+        centerpose.position.z = 0.32
         centerpose.orientation.x = 1
         centerpose.orientation.y = 1
         centerpose.orientation.z = -1
@@ -290,21 +290,21 @@ class LeftArmControl(object):
         # update number of next brick to place
         self._iteration += 1
     	# withdraw arm away from center
-        if self._iteration in [1, 2, 3, 6, 7, 9]:
+        if self._iteration in [1, 2, 3, 4, 5]:
             brickpose = Pose()
             brickpose.position.x = 0.55
             brickpose.position.y = -0.15
-            brickpose.position.z = 0.4
+            brickpose.position.z = 0.31
             brickpose.orientation.x = 1
             brickpose.orientation.y = 1
             brickpose.orientation.z = -1
             brickpose.orientation.w = 1
             joint_angles = self.ik_request(brickpose)
-        elif self._iteration in [4, 5, 8]:
+        elif self._iteration in [6, 7, 8]:
             brickpose = Pose()
             brickpose.position.x = 0.55
-            brickpose.position.y = -0.14
-            brickpose.position.z = 0.4
+            brickpose.position.y = -0.17
+            brickpose.position.z = 0.35
             brickpose.orientation.x = 1
             brickpose.orientation.y = 1
             brickpose.orientation.z = -1
