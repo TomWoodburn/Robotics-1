@@ -10,6 +10,7 @@ The additions of wheels onto the baxter robot to create deniro caused the robot 
 
 Solution
 --------
+
 For simulator examples we used the Baxter robot Environment. However, for the algorithm to still work we had to change various variables. For example, table height, brick starting position and baxter position. We believe these changes affected the algorithm and caused the real life DeNiro to not work flawlessly.
 
 
@@ -21,8 +22,8 @@ An error with either the brick model .urdf or the Gazebo simulation, meant that 
 Solution
 --------
 
-Tried increasing the frictions values, this didn’t work.
-Tried decreasing the stack size, this didn’t work.
+Tried increasing the frictions values, this didn't work.
+Tried decreasing the stack size, this didn't work.
 We changed our algorithm to pick up a bricks from the same position each time. We replace the picked up brick with a new brick each cycle, this does work.
 
 
@@ -45,4 +46,4 @@ The provided urdf file for the DeNiro robot limited the amount the end-effector 
 Solution
 --------
 
-We edited the urdf file for the end effector, changing the ‘open’ amount from 3 to 5. This meant that the maximum amount the grippers opened was increased and large enough to fit around the brick.
+We edited the urdf file for the end effector, changing the 'open' amount from 3 to 5. This meant that the maximum amount the grippers opened was increased and large enough to fit around the brick.
