@@ -1,45 +1,45 @@
-***************
-Failed Attempts
-***************
+*******************************
+Simulation Problems Encountered
+*******************************
 
 
-DeNiro Simulator Wheel Drift
-============================
+DENIRO Wheel Drift
+==================
 
-The additions of wheels onto the baxter robot to create deniro caused the robot to drift from its starting position. This happened either as a reaction to the force exerted by the arms but also due to unforeseen circumstances. This meant over the course of a demo, the robot would move and lose calibration. So successive brick pickups and stacks were not possible.
-
-Solution
---------
-
-For simulator examples we used the Baxter robot Environment. However, for the algorithm to still work we had to change various variables. For example, table height, brick starting position and baxter position. We believe these changes affected the algorithm and caused the real life DeNiro to not work flawlessly.
-
-
-Brick Stack Simulator Malfunctions
-==================================
-
-An error with either the brick model .urdf or the Gazebo simulation, meant that bricks stacked on top of each other would slip off when spawned into the environment without an external distrubance, or that they would sink into eachother or the table.
+The addition of wheels onto the Baxter robot to create DENIRO caused the robot to drift from its starting position. This happened as a reaction to the force exerted by the arms such that over the course of a demo, the robot would move and lose calibration. Successive brick pickups and stacks were not possible due to the accumulating error.
 
 Solution
 --------
 
-Tried increasing the frictions values, this didn't work.
-Tried decreasing the stack size, this didn't work.
-We changed our algorithm to pick up a bricks from the same position each time. We replace the picked up brick with a new brick each cycle, this does work.
+We tried increasing wheel surface friction, with limited results. The final solution for simulator examples was the use of Baxter, rather than DENIRO, robot Environment. Baxter is fixed in place on caster wheels rather than a wheelchair. 
 
 
-Inaccurate Simulator Inverse Kinematic Solver
-=============================================
+Brick Stack Instability
+=======================
 
-When programming the changeover positions, the inbuilt inverse kinematic solver would put the arms of the robot through its face. It had the right position for the end effector, but the rest of the arm would be in an invalid position for use in real life.
+An error with either the brick model .urdf and Gazebo simulation meant that bricks stacked on top of each other would slip off when spawned into the environment without an external distrubance, or that they would sink into eachother or the table.
 
 Solution
 --------
 
-Manually finding the joint angles for the changeover position. Optimising for minimal joint movement and a position away from the building structure.
+Setting the table blocks to be static objects aided stability. 
+
+We also tried increasing the frictions value and decreasing the stack size, with little success. A temporary simulation-only fix changed our algorithm to pick up a bricks from the same position each time, replacing the picked up brick with a new brick each cycle. For the physical demonstration the stack system was used. 
 
 
-Simulator End-Effector Gripper too Narrow for Brick
-===================================================
+Collisions from Inverse Kinematic Solver
+========================================
+
+When moving to changeover positions, the inbuilt inverse kinematic solver would sometimes colide with the robots body. It had the right position for the end effector, but the rest of the arm would be in an invalid position for use in real life.
+
+Solution
+--------
+
+Manually finding the joint angles for the changeover position. Optimising for minimal joint movement and a position away from the building structure. Moving to fixed joint angles instead of using inverse kinematics. 
+
+
+End-Effector Gripper too Narrow for Brick
+=========================================
 
 The provided urdf file for the DeNiro robot limited the amount the end-effector grippers could open. This resulted in it not being possible to fit around the required size of brick model.
 
