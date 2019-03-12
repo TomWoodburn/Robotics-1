@@ -2,6 +2,9 @@
 Algorithm Architecture
 **********************
 
+Node Funtionality
+=================
+
 
 Our algorithm is broken down into a number of key nodes:
 
@@ -15,8 +18,8 @@ spawning          A number of scripts for spawning various objects into the gaze
 ================  ============================================================
 
 
-Summary of algorithm
-====================
+Node Structure
+==============
 
 Given the nature of our task, we needed to build an algorithm that enables communication between the two arms. We do this using a series of topics which the arms and instructor publish and subscribe to: 
 
