@@ -327,6 +327,3 @@ def listen():
 while not rospy.is_shutdown():
 	print("Right arm running...")
 	listen()
-
-
-
