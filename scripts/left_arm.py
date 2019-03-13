@@ -5,10 +5,10 @@
 #                                                   #
 #     to be used with right_arm and instructor      #
 #                                                   #
-#  		Control DENIRO left arm:    	    #
-#           - Move above structure area             #
-#  	    - Erect structure                       #
-#    					 	    #
+#  			Control DENIRO left arm:				#
+#            - Move above structure area            #
+#  			 - Erect structure                      #
+#    					 							#
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # brick dims: 0.2 x 0.09 x 0.062 metres
@@ -46,21 +46,23 @@ from baxter_core_msgs.srv import (
 import baxter_interface
 
 class LeftArmControl(object):
-    def __init__(self, limb='left', hover_distance = 0.15, verbose=True, sequence=False):
+    def __init__(self, limb='left', hover_distance = 0.1, verbose=True, sequence=False):
         self._limb_name = limb # string
         self._hover_distance = hover_distance # in meters
         self._verbose = verbose # bool
         self._sequence = sequence # bool
         self._limb = baxter_interface.Limb(limb)
         self._gripper = baxter_interface.Gripper(limb)
+        self._gripper.set_moving_force(100)
+        self._gripper.set_holding_force(100)
         self._iteration = 1		# which brick is picked up next
-        self._start_angles = {	'left_w0': 0.8359511395557195,
-                                'left_w1': 1.4956828701842522,
-                                'left_w2': 1.6171889370762083,
-                                'left_e0': -0.9677303270823394,
-                                'left_e1': 0.8213818151267747,
-                                'left_s0': -0.08603077329959152,
-                                'left_s1': -0.45427309912761693   }
+        self._start_angles = {  'left_w0': 0.533499696708569,
+                                'left_w1': 0.7799868910407755,
+                                'left_w2': 1.6375448325562694,
+                                'left_e0': -0.39941915884883983,
+                                'left_e1': 1.2338767018085592,
+                                'left_s0': -0.17534067501871142,
+                                'left_s1': -0.33760908632608366  }
         self._close_angles = {  'left_w0': -1.1729,
                                 'left_w1': 1.9277,
                                 'left_w2': 2.2930,
@@ -68,21 +70,7 @@ class LeftArmControl(object):
                                 'left_e1': 1.9899,
                                 'left_s0': 0.0264,
                                 'left_s1': -1.3085 }
-        self._h_grab_angles = { 'left_w0': -1.24279,
-                                'left_w1': 1.52200,
-                                'left_w2': 2.39106,
-                                'left_e0': -0.31283,
-                                'left_e1': 1.52945,
-                                'left_s0': -0.37826,
-                                'left_s1': -0.65179 }
-        self._v_grab_angles = { 'left_w0': 0.79768,
-                                'left_w1': 1.34974,
-                                'left_w2': 1.30512,
-                                'left_e0': -2.03880,
-                                'left_e1': 1.38635,
-                                'left_s0': 0.11396,
-                                'left_s1': 0.63172 }
-        self._hover_pose = None
+        self._hover_angles = None
         # create empty pose and angles index for calibration
         self._cpose = Pose()
         self._cpose_angles = {}
@@ -116,8 +104,15 @@ class LeftArmControl(object):
 
     def interpret_rightarm(self, data):
         funcmap = {
+        'starting_demo': self.begin_sequence,
+        'brick_picked': self.movenearcenter,
+        'right_at_center': self.takebrick,
+        'brick_released': self.placebrick
         }
-        funcmap[data.data]()
+        try:
+            funcmap[data.data]()
+        except:
+            rospy.logerr('Function {} not in dictionary'.format(data.data))
 
     def calibrate(self):
      	# to be run on calibration request
@@ -125,7 +120,8 @@ class LeftArmControl(object):
      	self._cpose = self._limb.endpoint_pose()
      	self._cpose_angles = self._limb.joint_angles()
      	print("Left arm calibrated... frame origin at:\n{}".format(self._cpose))
-        self._hover_pose = None
+        self._hover_angles = None
+        self.hoverplace()
      	return
 
     def move_to_start(self, start_angles=None):
@@ -135,7 +131,6 @@ class LeftArmControl(object):
         print('Moving the {0} arm to start pose...'.format(self._limb_name))
         self._guarded_move_to_joint_position(start_angles)
         self.gripper_open()
-        rospy.sleep(1.0)
 
     def move_to_cpose(self):
     	# Move to start pos for calibration
@@ -191,21 +186,20 @@ class LeftArmControl(object):
 
     def gripper_close(self):
         self._gripper.close()
-        rospy.sleep(1.0)
+        rospy.sleep(2.0)
 
     def hoverplace(self):
     	print("Moving to neutral position by structure")
      	# hover at neutral pose above brick pile
-        if self._hover_pose:
-            joint_angles = self.ik_request(self._hover_pose)
-            self._guarded_move_to_joint_position(joint_angles)
+        if self._hover_angles:
+            self._guarded_move_to_joint_position(self._hover_angles)
             return
         calibrationpose = self._cpose
      	neutralpose = Pose()
      	# hoverbrick pose is a short distance above the brick
      	neutralpose.position.x = calibrationpose['position'].x - self._hover_distance
      	neutralpose.position.y = calibrationpose['position'].y
-     	neutralpose.position.z = calibrationpose['position'].z + self._hover_distance
+     	neutralpose.position.z = calibrationpose['position'].z + 2.5*self._hover_distance
         neutralpose.orientation.x = 1
         neutralpose.orientation.y = 1
         neutralpose.orientation.z = 0
@@ -213,75 +207,87 @@ class LeftArmControl(object):
      	# CHECK the orientation, ensure arm is ponted downwards
      	joint_angles = self.ik_request(neutralpose)
      	self._guarded_move_to_joint_position(joint_angles)
-        self._hover_pose = neutralpose
+        self._hover_angles = joint_angles
 
     def placebrick(self, bx = 0.2, by = 0.09, bz=0.062):
-        calibrationpose = self._cpose
+    	calibrationpose = self._cpose
         print("Placing brick #{}".format(self._iteration))
-        # collect the brick - iteration determines position
-        brickdict = {
+    	# collect the brick - iteration determines position
+    	brickdict = {
    #brick : [xpos, ypos, zpos, xor, yor, zor, wor]
-        1 : [0, -1.80*bx , 0.6*bx     ],               
-        2 : [0, -1.35*bx , 0.6*bx     ],     
-        3 : [0, -0.90*bx , 0.6*bx     ],          
-        4 : [0, -0.45*bx , 0.6*bx     ],          
-        5 : [0,  0       , 0.6*bx     ],  
-        6 : [0, -1.33*bx , 0.8*bx+bz  ],  
-        7 : [0, -0.26*bx , 0.8*bx+bz  ],
-        8 : [0, -0.72*bx , 0.8*bx+2.2*bz]
-        }
-        # do not continue if al 8 bricks have been moved
-        if self._iteration > 8:
-            rospy.logerr('Reading all 8 bricks have been placed...')
-            return
+    	1 : [0.1, -1.80*bx , 0.6*bx     ],               
+    	2 : [0.1, -1.35*bx , 0.6*bx     ],     
+    	3 : [0.1, -0.90*bx , 0.6*bx     ],          
+    	4 : [0.1, -0.45*bx , 0.6*bx     ],          
+    	5 : [0.1,  0       , 0.6*bx     ],  
+    	6 : [0.1, -1.33*bx , 0.8*bx+bz  ],  
+    	7 : [0.1, -0.26*bx , 0.8*bx+bz  ],
+    	8 : [0.1, -0.72*bx , 0.8*bx+2.2*bz]
+    	}
+    	# do not continue if al 8 bricks have been moved
+    	if self._iteration > 8:
+    		rospy.logerr('Reading all 8 bricks have been placed...')
+    		return
         self.hoverplace()
-        brickpose = Pose()
-        # determine brick location based on calibrationpose and brick dictionary
-        brickpose.position.x = calibrationpose['position'].x + brickdict[self._iteration][0]
-        brickpose.position.y = calibrationpose['position'].y + brickdict[self._iteration][1]
-        brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2] + 0.1
-        brickpose.orientation.x = 1
+    	brickpose = Pose()
+    	# determine brick location based on calibrationpose and brick dictionary
+    	brickpose.position.x = calibrationpose['position'].x + brickdict[self._iteration][0]
+    	brickpose.position.y = calibrationpose['position'].y + brickdict[self._iteration][1] - 0.1
+    	brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2] + 0.2
+     	brickpose.orientation.x = 1
         brickpose.orientation.y = 1
         brickpose.orientation.z = 0
         brickpose.orientation.w = 0
-        joint_angles = self.ik_request(brickpose)
-        self._guarded_move_to_joint_position(joint_angles)
+    	joint_angles = self.ik_request(brickpose)
+    	self._guarded_move_to_joint_position(joint_angles)
         if self._sequence:
             pub.publish('brick_placed')
         brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2]
         joint_angles = self.ik_request(brickpose)
         self._guarded_move_to_joint_position(joint_angles)
-        self._gripper.open()
-        brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2] + 0.1
+    	self._gripper.open()
+        brickpose.position.z = calibrationpose['position'].z + brickdict[self._iteration][2] + 0.2
         joint_angles = self.ik_request(brickpose)
         self._guarded_move_to_joint_position(joint_angles)
-        # return to calibration position
-        self.hoverplace()
-        # inform left arm that brick has been taken if running full sequence
+    	# return to calibration position
+    	self.hoverplace()
+    	# inform left arm that brick has been taken if running full sequence
+    	
 
     def movenearcenter(self):
     	# move brick to central position to be obtained by arm
-        self._guarded_move_to_joint_position(self._close_angles)
+        centerpose = Pose()
+        centerpose.position.x = 0.55
+        centerpose.position.y = 0
+        centerpose.position.z = 0.32
+        centerpose.orientation.x = 1
+        centerpose.orientation.y = 1
+        centerpose.orientation.z = -1
+        centerpose.orientation.w = 1
+        joint_angles = self.ik_request(centerpose)
+        self._guarded_move_to_joint_position(joint_angles)
+        #self._guarded_move_to_joint_position(self._close_angles)
+        self.gripper_open()
 
     def takebrick(self):
         # update number of next brick to place
         self._iteration += 1
     	# withdraw arm away from center
-        if self._iteration in [1, 2, 3, 6, 7, 9]:
+        if self._iteration in [1, 2, 3, 4, 5]:
             brickpose = Pose()
-            brickpose.position.x = 0.5
-            brickpose.position.y = 0.04
-            brickpose.position.z = 0.5
+            brickpose.position.x = 0.55
+            brickpose.position.y = -0.15
+            brickpose.position.z = 0.31
             brickpose.orientation.x = 1
             brickpose.orientation.y = 1
             brickpose.orientation.z = -1
             brickpose.orientation.w = 1
             joint_angles = self.ik_request(brickpose)
-        elif self._iteration in [4, 5, 8]:
+        elif self._iteration in [6, 7, 8]:
             brickpose = Pose()
-            brickpose.position.x = 0.5
-            brickpose.position.y = -0.02
-            brickpose.position.z = 0.5
+            brickpose.position.x = 0.55
+            brickpose.position.y = -0.17
+            brickpose.position.z = 0.35
             brickpose.orientation.x = 1
             brickpose.orientation.y = 1
             brickpose.orientation.z = -1
@@ -293,10 +299,9 @@ class LeftArmControl(object):
             return
         self._guarded_move_to_joint_position(joint_angles)
         self.gripper_close()
-        rospy.sleep(1.0)
     	# inform left arm that brick has been released if running full sequence
     	if self._sequence:
-    		pub.publish('left grabbed')
+    		pub.publish('brick_grabbed')
 
     def move_to_pos(self):
         current_pose = self._limb.endpoint_pose()
@@ -322,9 +327,11 @@ class LeftArmControl(object):
     	self._iteration = 0
 
 
-rospy.init_node('left_arm', anonymous=True)
+rospy.init_node('left_arm', anonymous=False)
 
-pub = rospy.Publisher('left_status', String, queue_size=5)
+rospy.wait_for_message('/robot/sim/started', Empty)
+
+pub = rospy.Publisher('left_status', String, queue_size=100)
 
 # initialise left arm
 leftarm = LeftArmControl(verbose=False)
@@ -340,4 +347,3 @@ def listen():
 while not rospy.is_shutdown():
 	print("Left arm running...")
 	listen()
-
