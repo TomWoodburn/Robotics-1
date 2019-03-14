@@ -17,7 +17,7 @@ Authors
 * Joseph Shepherd
 * Matthew Hamiltion
 * Thomas Woodburn
-* Nirav Ganju Cass
+* Nirav Ganju-Cass
 * Robert Hyde
 
 Summary
