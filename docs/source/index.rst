@@ -16,9 +16,10 @@ Authors
 * James Krasucki
 * Joseph Shepherd
 * Matthew Hamiltion
+* Robert Hyde
 * Thomas Woodburn
 * Nirav Ganju-Cass
-* Robert Hyde
+
 
 Summary
 =======
