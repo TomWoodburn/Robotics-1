@@ -108,7 +108,7 @@ class LeftArmControl(object):
 
     def calibrate(self):
      	# zero the end effector relative to the center of the build area
-     	# move the end effector to the zero point THEN run the calibration function
+     	# user should move the end effector to the zero point BEFORE running the calibration function
      	self._cpose = self._limb.endpoint_pose()
      	self._cpose_angles = self._limb.joint_angles()
      	print("Left arm calibrated... frame origin at:\n{}".format(self._cpose))
