@@ -246,6 +246,46 @@ The final 3 bricks will be placed horizontally, therefore ``self.iteration in [6
 Once the brick is moved to centre, The Right Arm, *right_arm.py*, publishes the ``right_at_center`` status topic. The Left Arm is subscribed to this topic, and informs the Left Arm that the brick is in the 'passover position'.
 
 
+3. Left arm moves to centre
+===========================
+
+.. note:: Steps 2 & 3 take place simultaneously
+
+Following on from step 1, once the right arm publishes the string ``'brick_picked'`` to its respective topic, the left arm, which is subscribed to this topic, reads and interprets this command via the ``interpret_rightarm`` function:
+
+.. code-block:: python
+		
+		def interpret_rightarm(self, data): 
+			# read status updates from right_arm_sim.py and execute appropriate function
+			funcmap = {
+			'starting_demo': self.begin_sequence,
+			'brick_picked': self.movenearcenter,
+			'right_at_center': self.takebrick,
+			'brick_released': self.placebrick
+			}
+			funcmap[data.data]()	# execute
+
+This string corresponds to a call of the left arms ``movenearcenter`` function, shown in full below:
+
+.. code-block:: python
+
+        def movenearcenter(self):
+            # Move arm near central trade position, ready to receive brick from right arm
+            centerpose = Pose()
+            centerpose.position.x = 0.55	# Position define so that the motion to grab the brick is a straight line
+            centerpose.position.y = 0
+            centerpose.position.z = 0.32
+            centerpose.orientation.x = 1
+            centerpose.orientation.y = 1
+            centerpose.orientation.z = -1
+            centerpose.orientation.w = 1
+            joint_angles = self.ik_request(centerpose)
+            self._guarded_move_to_joint_position(joint_angles)
+            self.gripper_open()
+
+This function has an almost identical form to the right arm equivalent in step 2. The centerpose is a hard coded cartesian position that is fed into the ``ik_request`` solver to provide a set of joint angles and these are then fed into the ``_guarded_move_to_joint_position`` function. With the gripper opened as the final command. 
+
+
 4. Left arm moves to centre
 ===========================
 
