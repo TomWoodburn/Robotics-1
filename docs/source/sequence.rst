@@ -1,6 +1,6 @@
-******************
-Sequence Execution
-******************
+*********************
+Sequence of Execution
+*********************
 
 1. First Brick Picked
 =====================
