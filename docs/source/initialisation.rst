@@ -1,6 +1,6 @@
-***********************************
-Initialising Nodes & Beginning Demo
-***********************************
+**************************
+Starting the Demo Sequence
+**************************
 
 Initialising Arms & Calibration
 ===============================
