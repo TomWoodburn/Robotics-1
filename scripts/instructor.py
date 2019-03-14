@@ -1,12 +1,20 @@
 #!/usr/bin/env python
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#                                                   #
 #                  instructor.py                    #
 #                                                   #
-#       Test functionality of individual arms       #
-#                  and run full demo                #
-#                                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+'''
+The instructor file is used to send commands to the left and right arm operators.
+It can be used in conjunction with: left_arm.py & right_arm.py OR left_arm_sim.py & right_arm_sim.py
+
+Use this program to test the functionality of individual arms or execute a full demo runthrough.
+
+Further information is available at:
+https://robotics-1.readthedocs.io/en/latest/architecture.html#publishing-instructions
+'''
 
 import argparse
 import struct
@@ -16,16 +24,16 @@ import copy
 import rospy
 import rospkg
 
-from std_msgs.msg import String
-
 from std_msgs.msg import (
+    String,
     Header,
     Empty,
 )
 
 import baxter_interface
 
-rightarm_dict = {           # dictionary of commands that can be sent to the right arm
+# commands that can be sent to the right arm (right_arm.py or right_arm_sim.py)
+rightarm_dict = {
     1: 'calibrate',
     2: 'demo',
     3: 'move to cpose',
@@ -39,7 +47,8 @@ rightarm_dict = {           # dictionary of commands that can be sent to the rig
     11: 'angles'
 }
 
-leftarm_dict = {            # dictionary of commands that can be sent to the left arm
+# commands that can be sent to the left arm (left_arm.py or left_arm_sim.py)
+leftarm_dict = {
     1: 'calibrate',
     2: 'demo',
     3: 'move to cpose',
