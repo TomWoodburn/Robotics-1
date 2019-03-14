@@ -36,7 +36,7 @@ Having set up the gazebo environment and spawned the baxter robot it is then nec
 Initialising Instructor and Beginning Demo
 ==========================================
 
-Once the left_arm, right_arm and spawn_single nodes have been initialised in separate terminal windows , the final node to initialise is the instructor. However, unlike the other nodes, Instructor is setup to run as an anonymous node. This allows it to be initialised multiple times, which is necessary to calibrate both arms of the robot in physical space.
+Once the left_arm, right_arm and spawn_single nodes have been initialised in separate terminal windows , the final node to initialise is the instructor. However, unlike the other nodes, Instructor is setup to run as an anonymous node. This allows it to be initialised multiple times, which is necessary to home (find the zero point) of both arms of the robot in physical space.
 
 .. note:: If this demo is being run on the physical DE NIRO robot, follow steps 1 through 8. If the demo is being run in simulation then use only steps 4,5 & 12
 
