@@ -2,7 +2,7 @@
 Zeroing the Robot
 *****************
  
-When using the physical robot, calibration is necessary to mark the positions of the starting stack of bricks and the finishing built structure.When the calibration function is run, it stores the cartesian position and joint angles corresponding to the end-effector�s current position. The cartesian position is used in other functions and the joint angles are used to efficiently return the arm to that position after certain movements.
+When using the physical robot, calibration is necessary to mark the positions of the starting stack of bricks and the finishing built structure.When the calibration function is run, it stores the cartesian position and joint angles corresponding to the end-effector's current position. The cartesian position is used in other functions and the joint angles are used to efficiently return the arm to that position after certain movements.
 
 
 .. note:: This process is not necessary for the simulation, as the robot arms automatically move to the starting position to the 'zero' home position based on the cartesian space coordinates in Gazebo World.
