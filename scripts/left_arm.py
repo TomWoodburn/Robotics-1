@@ -60,13 +60,13 @@ class LeftArmControl(object):
         self._gripper.set_moving_force(100)			# use 100% of gripper force when moving
         self._gripper.set_holding_force(100)			# use 100% of gripper force when holding
         self._iteration = 0					# which brick has been reached: begin at zero
-        self._start_angles = {  'left_w0': 0.533499696708569,
-                                'left_w1': 0.7799868910407755,
-                                'left_w2': 1.6375448325562694,
-                                'left_e0': -0.39941915884883983,
-                                'left_e1': 1.2338767018085592,
-                                'left_s0': -0.17534067501871142,
-                                'left_s1': -0.33760908632608366  }
+        self._start_angles = {  'left_w0': 0.3265927118184573,
+                                'left_w1': 1.0432241011396997,
+                                'left_w2': 1.7990492228330535,
+                                'left_e0': -0.5803752203184978,
+                                'left_e1': 1.654344222960436,
+                                'left_s0': 0.11933210656763382,
+                                'left_s1': -1.0294956526537833  }
         self._hover_angles = None
         self._cpose = Pose()					# calibration pose: empty until calibration function run
         self._cpose_angles = {}
@@ -250,9 +250,9 @@ class LeftArmControl(object):
     def movenearcenter(self):
     	# Move arm near central trade position, ready to receive brick from right arm
         centerpose = Pose()
-        centerpose.position.x = 0.55	# Position define so that the motion to grab the brick is a straight line
-        centerpose.position.y = 0
-        centerpose.position.z = 0.32
+        centerpose.position.x = 0.50	# Position define so that the motion to grab the brick is a straight line
+        centerpose.position.y = 0.15
+        centerpose.position.z = 0.50
         centerpose.orientation.x = 1
         centerpose.orientation.y = 1
         centerpose.orientation.z = -1
@@ -267,9 +267,9 @@ class LeftArmControl(object):
         self._iteration += 1				# Keep track of which brick is currently being grabbed
         if self._iteration in [1, 2, 3, 4, 5]:		# For bricks to be placed vertically
             brickpose = Pose()
-            brickpose.position.x = 0.55
-            brickpose.position.y = -0.15
-            brickpose.position.z = 0.31
+            brickpose.position.x = 0.500
+            brickpose.position.y = 0.050
+            brickpose.position.z = 0.400
             brickpose.orientation.x = 1
             brickpose.orientation.y = 1
             brickpose.orientation.z = -1
@@ -277,9 +277,9 @@ class LeftArmControl(object):
             joint_angles = self.ik_request(brickpose)
         elif self._iteration in [6, 7, 8]:		# For bricks to be placed horizontally
             brickpose = Pose()
-            brickpose.position.x = 0.55
-            brickpose.position.y = -0.17
-            brickpose.position.z = 0.35
+            brickpose.position.x = 0.500
+            brickpose.position.y = 0.000
+            brickpose.position.z = 0.500
             brickpose.orientation.x = 1
             brickpose.orientation.y = 1
             brickpose.orientation.z = -1
