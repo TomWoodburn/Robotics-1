@@ -79,7 +79,7 @@ The next step is to merge this folder with the baxter_sim_examples folder in the
 
 In the Virtual Machine go to the highlighted folder using the program "Files" [grasping_ws/src/baxter_simulator/baxter_sim_examples]
 
-.. figure:: _static/clone_code.png
+.. figure:: _static/folder_order.png
     :align: center
     :figwidth: 30 em
     :figclass: align-center
