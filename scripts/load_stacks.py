@@ -96,13 +96,13 @@ def spawn_brick(brick_name, brick_point = Point(x=0.6725, y=0.1265, z=0.5)):
 
 
 def spawn_initial_stack(x=0.6725, y=-0.4, z=0.73, brick_reference_frame="world"):
-    # Function to spawn three stacks of bricks when the function is run.
+    # Function to spawn two stacks of bricks when run.
     
     bz = 0.062                                  # Brick thickness
     by = 0.086                                  # Brick width
     offset = 0.008                              # Buffer gap to prevent clipping
     height = z
-    for n in range(3):                          # First stack of three bricks
+    for n in range(4):                          # First stack of four bricks
         position=Point(x, y, height+offset)
         brick_name = 'Brick'+str(n)             # Bricks must have unique names
         spawn_brick(brick_name, brick_point = position)
@@ -111,20 +111,10 @@ def spawn_initial_stack(x=0.6725, y=-0.4, z=0.73, brick_reference_frame="world")
 
     height = z                                  # Reset height to table level
     y  -= 2*by                                  # Next stack is two brick widths to the right
-    for n in range(3):                          # Second stack of three bricks
+    for n in range(4):                          # Second stack of four bricks
         print (height+offset)
         position=Point(x, y, height+offset)
         brick_name = 'Brick'+str(n+3)
-        spawn_brick(brick_name, brick_point = position)
-        height = height + bz
-        rospy.sleep(0.5)
-
-    height = z                                  # Reset height to table level
-    y -= 2*by                                   # Final stack is another two brick widths to the right
-    for n in range(2):                          # Last stack contains only two bricks
-        print (height+offset)
-        position=Point(x, y, height+offset)
-        brick_name = 'Brick'+str(n+6)
         spawn_brick(brick_name, brick_point = position)
         height = height + bz
         rospy.sleep(0.5)
