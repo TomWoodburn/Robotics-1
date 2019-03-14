@@ -150,9 +150,11 @@ Once the right arm has grabbed the brick and moved upwards to its hover position
 2. Right arm moves to centre
 ============================
 
-Having completed the brick pick-up, the Right Arm moves to a 'hover position' above the bricks. Next, the Right Arm moves to a new set of fixed joint angles. This new set of fixed joint angles results in an end-effector pose where the brick is held parallel to the x-axis, and in a central 'passover position' where bricks can be passed to the Left Arm. 
+Having completed the brick pick-up, the Right Arm moves to a 'hover position' above the bricks, defined by stored joint angles which is close to the brick in the centre. Adding this snapshot increases the robustness of the demo. 
 
-The class **RightArmControl(object)** contains the set of hard-coded joint angles for 
+Next, the Right Arm moves to a new set of fixed joint angles. This new set of fixed joint angles results in an end-effector pose where the brick is held parallel to the x-axis, and in a central 'passover position' where bricks can be passed to the Left Arm. 
+
+The class ``RightArmControl(object)`` contains the set of hard-coded joint angles for 
 
 ::
 
@@ -161,7 +163,7 @@ The class **RightArmControl(object)** contains the set of hard-coded joint angle
  3) self._v_pass_angles - for when brick are passed vertically between arms
 
 
-The 'hover position', the position to which the Right Arm moves to following brick pick up, is defined as a certain distance in the z-axis above the stack of bricks. The distance of the 'hover position' is defined in the class as **hover_distance**
+The 'hover position', the position to which the Right Arm moves to following brick pick up, is defined as a certain distance in the z-axis above the stack of bricks. The distance of the 'hover position' is defined in the class as ``hover_distance``
 
 .. code-block:: python
 
@@ -213,18 +215,18 @@ The 'hover position', the position to which the Right Arm moves to following bri
 			self._rs.enable()
 
 
-From the 'hover position' the Right Arm moves to the central 'passover position', using the **movetocenter(self)** function. 
+From the 'hover position' the Right Arm moves to the central 'passover position', using the ``movetocenter(self)`` function. 
 
-The first 5 bricks will be placed vertically, therefore **self.iteration in [1...5]** link to the **self._v_pass_angles**
+The first 5 bricks will be placed vertically, therefore ``self.iteration in [1...5]`` link to the ``self._v_pass_angles``
 
-The final 3 bricks will be placed horizontally, therefore **self.iteration in [6...8]** link to the **self._h_pass_angles**
+The final 3 bricks will be placed horizontally, therefore ``self.iteration in [6...8]`` link to the ``self._h_pass_angles``
 
 ::
 
  self._guarded_move_to_joint_position(self._h_pass_angles)
 
 
-**Guarded_move_to** is a move type that is used so that if problems are encountered in a move,they are logged as errors - preventing code from crashing.
+``Guarded_move_to`` is a move type that is used so that if problems are encountered in a move,they are logged as errors - preventing code from crashing.
 
 .. code-block:: python
 
@@ -241,8 +243,58 @@ The final 3 bricks will be placed horizontally, therefore **self.iteration in [6
     	if self._sequence:						# Inform left arm
     		pub.publish('right_at_center')
 
-Once the brick is moved to centre, The Right Arm, **right_arm.py**, publishes the 'right_at_center' status topic. The Left Arm is subscribed to this topic, and informs the Left Arm that the brick is in the 'passover position'.
+Once the brick is moved to centre, The Right Arm, *right_arm.py*, publishes the ``right_at_center`` status topic. The Left Arm is subscribed to this topic, and informs the Left Arm that the brick is in the 'passover position'.
 
+
+4. Left arm moves to centre
+===========================
+
+Once the left arm sees ``right_at_centre`` on the right arm status topic it calls ``takebrick``
+
+.. code-block:: bash
+	
+		'right_at_center': self.takebrick,
+
+``Takebrick`` performs the entire action of moving to the brick (to a hover position first) and picking it up.
+
+.. code-block:: python
+	
+		def takebrick(self):
+        		self._iteration += 1
+        		if self._iteration in [1, 2, 3, 4, 5]:
+            			brickpose = Pose()
+            			brickpose.position.x = 0.55
+            			brickpose.position.y = -0.15
+            			brickpose.position.z = 0.31
+            			brickpose.orientation.x = 1
+            			brickpose.orientation.y = 1
+            			brickpose.orientation.z = -1
+            			brickpose.orientation.w = 1
+            			joint_angles = self.ik_request(brickpose)
+
+The stored joint angles depend on the required orientation of the brick in the final structure. Bricks 1,2,3,4 and 5 are placed vertically whereas bricks 6,7 and 8 are horizontal. 
+
+.. code-block:: python
+
+		        elif self._iteration in [6, 7, 8]:
+            		brickpose = Pose()
+           		 	brickpose.position.x = 0.55
+                    brickpose.position.y = -0.17
+                    brickpose.position.z = 0.35
+                    brickpose.orientation.x = 1
+                    brickpose.orientation.y = 1
+                    brickpose.orientation.z = -1
+                    brickpose.orientation.w = 1
+                    joint_angles = self.ik_request(brickpose)		
+
+			
+
+Next, ``takebrick`` simply instructs the left arm to follow the final, linear motion to the brick and close it’s gripper. Once it is holding onto the brick, it lets the right arm know so that it can release. 
+
+.. code-block:: python
+
+		if self._sequence:
+    			pub.publish('brick_grabbed')
 
 
 5. Left arm places brick
@@ -250,7 +302,7 @@ Once the brick is moved to centre, The Right Arm, **right_arm.py**, publishes th
 
 The left arm always grabs the passover brick using the same orientation. After it has grabbed the brick it needs to place the brick in the correct position. 
 
-To place the brick in its predetermined position, a dictionary of brick positions is used “brickdict”. 
+To place the brick in its predetermined position, a dictionary of brick positions is used ``brickdict``. 
 
 	.. code-block:: python
 	
@@ -266,17 +318,17 @@ To place the brick in its predetermined position, a dictionary of brick position
 			8 : [0.1, -0.72*bx , 0.8*bx+2.2*bz]
 		}
 
-This dictionary gives the position the brick should be placed by using multiples of the brick dimensions (bx, by, bz) and the “calibrationpose”. This means the structure can be built from any starting home coordinates of the left arm. 
+This dictionary gives the position the brick should be placed by using multiples of the brick dimensions (bx, by, bz) and the ``calibrationpos``. This means the structure can be built from any starting home coordinates of the left arm. 
 
 Depending on the iteration number of the brick, the algorithm selects the number of position. The orientation of the end-effector when placing the brick is also dependant on the iteration number. However, this is done through the right arm passing the brick in different orientations. 
 
-Using the calibration pose as the home coordinates for building, and the brick dictionary, the algorithm now has an exact position to place the brick. Using inverse kinematics of the “def ik_request(self, pose):” function, it moves to the “hoverpose”. This moves the left arm to the correct position, but a constant distance “self._hover_distance” upwards from it. This ensures that the end-effector does not place the brick with an awkward approach angle or speed. 
+Using the calibration pose as the home coordinates for building, and the brick dictionary, the algorithm now has an exact position to place the brick. Using inverse kinematics of the  ``ik_request(self, pose)`` function, it moves to the ``hoverpose``. This moves the left arm to the correct position, but a constant distance ``self._hover_distance`` upwards from it. This ensures that the end-effector does not place the brick with an awkward approach angle or speed. 
 
 Instead, the end-effector can now safely move the brick downwards into position. Having placed the brick in position, the left arm publishes thi to the left arm topic, and releases the brick. 
 
 
-6. Steps 1 to 12 are repeated until the tower is built
-======================================================
+6. Repeat until the tower is built
+==================================
 
 The process of picking up, passing, and placing bricks is looped autonomously until the last brick from the predetermined piles is placed. 
 
