@@ -5,6 +5,9 @@ load_stacks.py
 
 This file loads in and provides spawning functions for the spawn_stacks.py file.
 Spawns two stacks of 3 bricks and one stack of 2 bricks on the rightmost table.
+
+These bricks will likely displace themselves in the simulation, rendering the robot unable to manipulate them
+This file is primarily included for reference of our methodology: we recommend using load_single.py in all simulations
 '''
 
 import rospy
