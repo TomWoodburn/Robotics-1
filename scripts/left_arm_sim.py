@@ -7,6 +7,8 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 '''
+FOR USE IN SIMULATION WITH BAXTER ROBOT ONLY
+
 The left arm simulation file receives commands and operates the left arm of the BAXTER robot.
 It can be used in conjunction with the right_arm_sim.py and an instructor file.
 
