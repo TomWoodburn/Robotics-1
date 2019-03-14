@@ -125,7 +125,7 @@ class LeftArmControl(object):
         self.gripper_open()
 
     def move_to_cpose(self):
-    	# Move to start pos for calibration
+    	# Move to the recorded calibration pose
         print('Moving the to calibration pose...')
         self._guarded_move_to_joint_position(self._cpose_angles)
 
@@ -332,7 +332,7 @@ def listen():
 	# Background function
 	rospy.Subscriber('instructor_left', String, leftarm.interpret_instructor)	# Wait for command from instructor file
 	rospy.Subscriber('right_status', String, leftarm.interpret_rightarm)		# Or react to right arm status updates
-	rospy.spin()									# Run continuously
+	rospy.spin()									# Listen continuously
 
 while not rospy.is_shutdown():				# Main loop
 	print("Left arm running...")
