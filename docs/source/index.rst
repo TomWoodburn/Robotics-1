@@ -36,7 +36,7 @@ Future improvements to the project could include a final implementation of autom
 
 .. figure:: _static/passover.jpg
     :align: center
-    :figwidth: 30 em
+    :figwidth: 40 em
     :figclass: align-center
 
 Documentation
@@ -60,7 +60,6 @@ This documentation covers the installation, running and operation of the Multi A
 
    architecture
    sequence
-   otherfunctions
    simulationproblems
 
 .. toctree::
