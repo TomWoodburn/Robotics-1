@@ -44,7 +44,7 @@ Our demo is performed using a sequence of functions which do various parts of th
 Publishing Instructions
 =======================
 
-In instructor.py we define a dictionary of commands for the right and left arms. The dictionary consists of numbers, ascribed to strings which serve as the instructions. These instructions are what are posted to the topics during operation.
+In instructor.py we define a dictionary of commands for the right and left arms. The dictionary consists of numbers, ascribed to strings which serve as the instructions. These instructions are posted to the topics during operation.
 
 	.. code-block:: bash
 	
