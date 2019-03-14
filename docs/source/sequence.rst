@@ -2,8 +2,11 @@
 Sequence of Execution
 *********************
 
-1. First Brick Picked
-=====================
+In 'Demo' mode ``self.sequence`` is set to true, and a sequence all the motions is automatically started, until the pile of bricks has run out. 
+
+
+1. Right Arm picks brick
+========================
 
 The first step in the cascading series of actions that makes up the Sequence is the picking up of the first brick.
 
@@ -283,19 +286,9 @@ This string corresponds to a call of the left arms ``movenearcenter`` function, 
             self._guarded_move_to_joint_position(joint_angles)
             self.gripper_open()
 
-This function has an almost identical form to the right arm equivalent in step 2. The centerpose is a hard coded cartesian position that is fed into the ``ik_request`` solver to provide a set of joint angles and these are then fed into the ``_guarded_move_to_joint_position`` function. With the gripper opened as the final command. 
+This function has an almost identical form to the right arm equivalent in step 2. The centerpose is a hard coded cartesian position that is fed into the ``ik_request`` solver to provide a set of joint angles and these are then fed into the ``_guarded_move_to_joint_position`` function.
 
-
-4. Left arm moves to centre
-===========================
-
-Once the left arm sees ``right_at_centre`` on the right arm status topic it calls ``takebrick``
-
-.. code-block:: bash
-	
-		'right_at_center': self.takebrick,
-
-``Takebrick`` performs the entire action of moving to the brick (to a hover position first) and picking it up.
+The stored joint angles depend on the required orientation of the brick in the final structure. Bricks 1,2,3,4 and 5 are placed vertically whereas bricks 6,7 and 8 are horizontal. 
 
 .. code-block:: python
 	
@@ -311,14 +304,9 @@ Once the left arm sees ``right_at_centre`` on the right arm status topic it call
             			brickpose.orientation.z = -1
             			brickpose.orientation.w = 1
             			joint_angles = self.ik_request(brickpose)
-
-The stored joint angles depend on the required orientation of the brick in the final structure. Bricks 1,2,3,4 and 5 are placed vertically whereas bricks 6,7 and 8 are horizontal. 
-
-.. code-block:: python
-
-		        elif self._iteration in [6, 7, 8]:
-            		brickpose = Pose()
-           		 	brickpose.position.x = 0.55
+                elif self._iteration in [6, 7, 8]:
+                    brickpose = Pose()
+                    brickpose.position.x = 0.55
                     brickpose.position.y = -0.17
                     brickpose.position.z = 0.35
                     brickpose.orientation.x = 1
@@ -327,7 +315,6 @@ The stored joint angles depend on the required orientation of the brick in the f
                     brickpose.orientation.w = 1
                     joint_angles = self.ik_request(brickpose)		
 
-			
 
 Next, ``takebrick`` simply instructs the left arm to follow the final, linear motion to the brick and close it’s gripper. Once it is holding onto the brick, it lets the right arm know so that it can release. 
 
@@ -335,6 +322,182 @@ Next, ``takebrick`` simply instructs the left arm to follow the final, linear mo
 
 		if self._sequence:
     			pub.publish('brick_grabbed')
+
+
+
+4. ????????????
+===============
+
+At the end of step 2 the rigt arm publishes the string ``'right_at_Centre'`` to its topic.The left arm again reads and interprets this command via the ``interpret_rightarm`` function:
+
+.. code-block:: python
+		
+		def interpret_rightarm(self, data): 
+			# read status updates from right_arm_sim.py and execute appropriate function
+			funcmap = {
+			'starting_demo': self.begin_sequence,
+			'brick_picked': self.movenearcenter,
+			'right_at_center': self.takebrick,
+			'brick_released': self.placebrick
+			}
+			funcmap[data.data]()	# execute
+
+This string corresponds to a call of the left arms ``takebrick`` function, shown in full below:
+
+.. code-block:: python
+
+		def takebrick(self):
+			# Take the brick that is currently being held by the right arm
+			self._iteration += 1				# Keep track of which brick is currently being grabbed
+			if self._iteration in [1, 2, 3, 4, 5]:		# For bricks to be placed vertically
+				brickpose = Pose()
+				brickpose.position.x = 0.55
+				brickpose.position.y = -0.15
+				brickpose.position.z = 0.31
+				brickpose.orientation.x = 1
+				brickpose.orientation.y = 1
+				brickpose.orientation.z = -1
+				brickpose.orientation.w = 1
+				joint_angles = self.ik_request(brickpose)
+			elif self._iteration in [6, 7, 8]:		# For bricks to be placed horizontally
+				brickpose = Pose()
+				brickpose.position.x = 0.55
+				brickpose.position.y = -0.17
+				brickpose.position.z = 0.35
+				brickpose.orientation.x = 1
+				brickpose.orientation.y = 1
+				brickpose.orientation.z = -1
+				brickpose.orientation.w = 1
+				joint_angles = self.ik_request(brickpose)
+			else:
+				# Failsafe in case of user error when testing: this should not be reached during the demo
+				ros.logerr('Brick iteration exceeds expected value')
+				return
+			self._guarded_move_to_joint_position(joint_angles)
+			self.gripper_close()
+			if self._sequence:				# Inform right arm that the brick has been grabbed
+				pub.publish('brick_grabbed')
+
+The first step of this function is to increase the iteration (brick count) for this class (the left arm). This allows the arm to know which brick it is passing. This is important as some of the bricks require a slightly different grabbing position (``brickpose``) for the left arm : 
+
+.. code-block:: python
+
+		def takebrick(self):
+			...
+			if self._iteration in [1, 2, 3, 4, 5]:		# For bricks to be placed vertically
+				brickpose = Pose()
+				brickpose.position.x = 0.55
+				brickpose.position.y = -0.15
+				brickpose.position.z = 0.31
+				brickpose.orientation.x = 1
+				brickpose.orientation.y = 1
+				brickpose.orientation.z = -1
+				brickpose.orientation.w = 1
+				joint_angles = self.ik_request(brickpose)
+			elif self._iteration in [6, 7, 8]:		# For bricks to be placed horizontally
+				brickpose = Pose()
+				brickpose.position.x = 0.55
+				brickpose.position.y = -0.17
+				brickpose.position.z = 0.35
+				brickpose.orientation.x = 1
+				brickpose.orientation.y = 1
+				brickpose.orientation.z = -1
+				brickpose.orientation.w = 1
+				joint_angles = self.ik_request(brickpose)
+			...
+
+Within these if statements, once the ``brickpose`` is set using hard coded cartesian co-ordinates, the ``ik_request`` solver is again used to find the joint angles for the required position. 
+
+.. code-block:: python
+
+		def takebrick(self):
+			...
+			self._guarded_move_to_joint_position(joint_angles)
+			self.gripper_close()
+			if self._sequence:				# Inform right arm that the brick has been grabbed
+				pub.publish('brick_grabbed')
+
+Following this, the ``_guarded_move_to_joint_position`` function is used to move the left arm end effector to the grabbing position and then the gripper is closed and finally ``'brick_grabbed'`` is published to the left arm node topic. 
+
+The right arm, which is subscribed to this topic, reads this string and uses the ``interpret_leftarm`` function shown below to interpret this command. 
+
+.. code-block:: python
+		
+	    def interpret_leftarm(self, data):
+    	# read status updates from left_arm_sim.py and execute appropriate function
+			funcmap = {
+			'brick_grabbed': self.releasebrick,
+			'brick_placed': self.pickbrick
+			}
+			funcmap[data.data]()	# execute
+
+This string corresponds to a call of the right arms ``releasebrick`` function, shown in full below:
+
+.. code-block:: python
+		
+	def releasebrick(self):
+    	# Let go of the brick being traded, and move away from the trade position
+			self.gripper_open()
+			current_pose = self._limb.endpoint_pose()
+			newpose = Pose()
+			newpose.position.x = current_pose['position'].x
+			newpose.position.y = current_pose['position'].y
+			newpose.position.z = current_pose['position'].z + 0.7*self._hover_distance	# move away so brick does not collide
+			newpose.orientation.x = current_pose['orientation'].x
+			newpose.orientation.y = current_pose['orientation'].y
+			newpose.orientation.z = current_pose['orientation'].z
+			newpose.orientation.w = current_pose['orientation'].w
+			joint_angles = self.ik_request(newpose)
+			self._guarded_move_to_joint_position(joint_angles)
+			if self._sequence:						# Inform left arm
+				pub.publish('brick_released')
+			self.hoverbrick()		
+
+The first order in this function is the opening of the gripper using ``gripper_open`` After this the inbuilt function ``_limb.endpoint_pose`` is called which uses forward kinematics to find the current cartesian position of the end effector
+
+.. code-block:: python
+		
+	    def releasebrick(self):
+		 	....
+			current_pose = self._limb.endpoint_pose()
+			...
+
+This set of co-ordinates is then used to find the ``newpose`` - the hover position the end effector must now move to to be clear of the grabbed brick:
+
+.. code-block:: python
+		
+	    def releasebrick(self):
+			...
+			newpose = Pose()
+			newpose.position.x = current_pose['position'].x
+			newpose.position.y = current_pose['position'].y
+			newpose.position.z = current_pose['position'].z + 0.7*self._hover_distance
+			newpose.orientation.x = current_pose['orientation'].x
+			newpose.orientation.y = current_pose['orientation'].y
+			newpose.orientation.z = current_pose['orientation'].z
+			newpose.orientation.w = current_pose['orientation'].w
+			...
+
+With this position defined we again use the ``ik_request`` and ''_guarded_move_to_joint_position`` to find the joint angles and then move to this position;
+
+.. code-block:: python
+		
+	    def releasebrick(self):
+			...
+			joint_angles = self.ik_request(newpose)
+			self._guarded_move_to_joint_position(joint_angles)
+			...
+
+The function then ends by publishing ``'brick_released'`` and calling the ``hoverbrick`` function which will move the right arm back to its start position above the brick spawn location.
+
+.. code-block:: python
+		
+	    def releasebrick(self):
+			...
+			if self._sequence:						# Inform left arm
+				pub.publish('brick_released')
+			self.hoverbrick()	
+
 
 
 5. Left arm places brick
@@ -367,8 +530,8 @@ Using the calibration pose as the home coordinates for building, and the brick d
 Instead, the end-effector can now safely move the brick downwards into position. Having placed the brick in position, the left arm publishes thi to the left arm topic, and releases the brick. 
 
 
-6. Repeat until the tower is built
-==================================
+6. Repeat until complete
+========================
 
 The process of picking up, passing, and placing bricks is looped autonomously until the last brick from the predetermined piles is placed. 
 
