@@ -9,20 +9,20 @@ The first step in the cascading series of actions that makes up the Sequence is 
 
 When the 'Demo' command is input to the right arm terminal the ``begin_sequence`` function is called. 
 
-.. code-block:: bash
+.. code-block:: python
 	
-		def begin_sequence(self):
-    	# When user wishes to demo full sequence: reset iteration count, enable communication between arms, and start demo
-    	print("BEGINNING FULL DEMO")
-        pub.publish('starting_demo')
-    	self._sequence = True
-    	self._iteration = 0
-    	self.pickbrick()
+        def begin_sequence(self):
+            # When user wishes to demo full sequence: reset iteration count, enable communication between arms, and start demo
+            print("BEGINNING FULL DEMO")
+                pub.publish('starting_demo')
+            self._sequence = True
+            self._iteration = 0
+            self.pickbrick()
 
 
 This ``begin_sequence`` function sets the iteration value to 0, which represents the brick count. It then calls the ``pickbrick`` function, shown in full here: 
 
-.. code-block:: bash
+.. code-block:: python
 	
 		def pickbrick(self, brick_y = 0.09, brick_z = 0.062):
 			# Pick up the brick to be manipulated
@@ -52,7 +52,7 @@ This ``begin_sequence`` function sets the iteration value to 0, which represents
 
 The first order of this function is to increase the iteration (brick count) by 1, then the gripper is open in place using the inbuilt ``_gripper.open`` function.
 
-.. code-block:: bash
+.. code-block:: python
 
 		def pickbrick(self, brick_y = 0.09, brick_z = 0.062):
 			...
@@ -62,7 +62,7 @@ The first order of this function is to increase the iteration (brick count) by 1
 
 Following this the ``brickpose`` - the position the end effector will move to in order to pick up the brick - is set. 
 
-.. code-block:: bash
+.. code-block:: python
 
 		def pickbrick(self, brick_y = 0.09, brick_z = 0.062):
 			...
@@ -79,7 +79,7 @@ Following this the ``brickpose`` - the position the end effector will move to in
 
 .. note:: For the digital robot simulation a single brick is continously spawned in one location , meaning the brickpose is unchanged throughout the sequence and is equal to the ``calibrationpose`` minus one brick height ``brick_z``. However, when using the physical DE NIRO robot the bricks start in two stacked piles of 4 and each iteration the brick pose is changed by combining the ``calibrationpose`` and the ``brickdict`` shown below, which is the relative position of a brick to the calibration point using a combination of ``brick_y`` and ``brick_z`` dimensions dependent on the iteration value:
 
-.. code-block:: bash
+.. code-block:: python
 		
 		brickdict = {
 		# brick number (1-8): position relative to calibration [x, y, z]
@@ -96,7 +96,7 @@ Following this the ``brickpose`` - the position the end effector will move to in
 
 Once this cartesian ``brickpose`` is defined, the inbuilt inverse kinematics solver is called using ``ik_request`` and the resulting joint angles are input to the ``_guarded_move_to_joint_position`` function which moves the limbs to these joint angles. The gripper is then closed around the brick with ``_gripper.close`` :
 
-.. code-block:: bash
+.. code-block:: python
 		
 		def pickbrick(self, brick_y = 0.09, brick_z = 0.062):
 			...
@@ -111,7 +111,7 @@ After this the arm returns to the hover pose above the brick using the ``hoverbr
 
 .. note:: For the simulation which uses only one brick spawn location and consequently only one hover position, once this function has been run the first time and the ``_hover_angles`` have been created they are re-used and not calculated again as the initial if statement allows this function to be skipped. 
 
-.. code-block:: bash
+.. code-block:: python
 		
 	    def hoverbrick(self):
 			# Hover the end effector slightly above the brick spawn point
@@ -137,7 +137,7 @@ After this the arm returns to the hover pose above the brick using the ``hoverbr
 
 Once the right arm has grabbed the brick and moved upwards to its hover position the final step is to publish to the right arm topic that the brick has been Picked , notifying the left arm. The right arm is then ordered to ``movetocenter``
 
-.. code-block:: bash
+.. code-block:: python
 		
 		def pickbrick(self, brick_y = 0.09, brick_z = 0.062):
 			...
@@ -150,75 +150,142 @@ Once the right arm has grabbed the brick and moved upwards to its hover position
 2. Right arm moves to centre
 ============================
 
-Having set up the gazebo environment and spawned the baxter robot it is then necessary to initialise all our constituent nodes:
+Having completed the brick pick-up, the Right Arm moves to a 'hover position' above the bricks. Next, the Right Arm moves to a new set of fixed joint angles. This new set of fixed joint angles results in an end-effector pose where the brick is held parallel to the x-axis, and in a central 'passover position' where bricks can be passed to the Left Arm. 
 
-.. note:: If running the demo on the physical DE NIRO robot then ignore step 1. If running in simulation follow all steps below
+The class **RightArmControl(object)** contains the set of hard-coded joint angles for 
 
-1. Open a new terminal window to spawn the tables and bricks in simulation:
+::
 
-	.. code-block:: bash
-	
-		cd grasping_ws
-		./baxter.sh sim
-		rosrun baxter_sim_examples spawn_single.py 
+ 1) self._start_angles - joint angles following brickpick
+ 2) self._h_pass_angles - for when brick are passed horizontally between arms
+ 3) self._v_pass_angles - for when brick are passed vertically between arms
 
-.. note:: If this demo is being run on the physical DE NIRO robot, follow steps 1 through 8. If the demo is being run in simulation then use only steps 4,5 & 12
 
-**Once the demo begins there is no need for further human input, the code operates autonomously using node topics.**
+The 'hover position', the position to which the Right Arm moves to following brick pick up, is defined as a certain distance in the z-axis above the stack of bricks. The distance of the 'hover position' is defined in the class as **hover_distance**
 
-3. Left arm moves to centre
-===========================
+.. code-block:: python
 
-Having set up the gazebo environment and spawned the baxter robot it is then necessary to initialise all our constituent nodes:
+	class RightArmControl(object):
+		def __init__(self, limb='right', hover_distance = 0.25, verbose=True, sequence=False):
+			self._limb_name = limb
+			self._hover_distance = hover_distance
+			self._verbose = verbose				# print debug messages
+			self._sequence = sequence			# will run full demo once enabled
+			self._limb = baxter_interface.Limb(limb)
+			self._gripper = baxter_interface.Gripper(limb)
+			self._gripper.set_moving_force(90)			# use 90% of gripper force when moving
+			self._gripper.set_holding_force(90)			# use 90% of gripper force when holding
+			self._iteration = 0					# which brick is being manipulated: begin at zero
+			self._start_angles = {  'right_s0': 0.19194192950377786,
+									'right_s1': -0.4300336661388311,
+									'right_w0': 0.0412353893921642,
+									'right_w1': 0.6860390155959699,
+									'right_w2': -0.5985258112031371,
+									'right_e0': -0.037674601862013546,
+									'right_e1': 1.2950341401339145   }
+		# Hardcoded pass angles for horizontal brick placement
+			self._h_pass_angles = { 'right_s0': 0.002824106358810141,
+									'right_s1': -1.0514117177590556,
+									'right_w0': 1.102326282212558,
+									'right_w1': 1.70459523735878,
+									'right_w2': 0.7332560190418596,
+									'right_e0': 0.4105871371295322,
+									'right_e1': 1.9241090653363315  }
+		# Hardcoded pass angles for vertical brick placement
+			self._v_pass_angles = { 'right_s0': -0.17455188835565316,
+									'right_s1': -0.7671991859344809,
+									'right_w0': -0.7748709352937055,
+									'right_w1': 1.572464837389778,
+									'right_w2': -0.7227189655500057,
+									'right_e0': 1.739379551281571,
+									'right_e1': 1.735157459717211  }
+			self._hover_angles = None
+			self._cpose = Pose()					# calibration pose: empty until calibration function run
+			self._cpose_angles = {}
+			ns = 'ExternalTools/' + limb + '/PositionKinematicsNode/IKService'
+			self._iksvc = rospy.ServiceProxy(ns, SolvePositionIK)
+			rospy.wait_for_service(ns, 5.0)
+			# verify robot is enabled
+			print('Getting robot state... ')
+			self._rs = baxter_interface.RobotEnable(baxter_interface.CHECK_VERSION)
+			self._init_state = self._rs.state().enabled
+			print('Enabling robot...')
+			self._rs.enable()
 
-.. note:: If running the demo on the physical DE NIRO robot then ignore step 1. If running in simulation follow all steps below
 
-1. Open a new terminal window to spawn the tables and bricks in simulation:
+From the 'hover position' the Right Arm moves to the central 'passover position', using the **movetocenter(self)** function. 
 
-	.. code-block:: bash
-	
-		cd grasping_ws
-		./baxter.sh sim
-		rosrun baxter_sim_examples spawn_single.py 
+The first 5 bricks will be placed vertically, therefore **self.iteration in [1...5]** link to the **self._v_pass_angles**
 
-.. note:: If this demo is being run on the physical DE NIRO robot, follow steps 1 through 8. If the demo is being run in simulation then use only steps 4,5 & 12
+The final 3 bricks will be placed horizontally, therefore **self.iteration in [6...8]** link to the **self._h_pass_angles**
 
-**Once the demo begins there is no need for further human input, the code operates autonomously using node topics.**
+::
 
-4. Brick is passed
-==================
+ self._guarded_move_to_joint_position(self._h_pass_angles)
 
-Having set up the gazebo environment and spawned the baxter robot it is then necessary to initialise all our constituent nodes:
 
-.. note:: If running the demo on the physical DE NIRO robot then ignore step 1. If running in simulation follow all steps below
+**Guarded_move_to** is a move type that is used so that if problems are encountered in a move,they are logged as errors - preventing code from crashing.
 
-1. Open a new terminal window to spawn the tables and bricks in simulation:
+.. code-block:: python
 
-	.. code-block:: bash
-	
-		cd grasping_ws
-		./baxter.sh sim
-		rosrun baxter_sim_examples spawn_single.py 
+    def movetocenter(self):
+    	# Move arm to central trade position with brick
+    	if self._iteration in [1, 2, 3, 4, 5]:				# For bricks to be placed vertically
+            self._guarded_move_to_joint_position(self._v_pass_angles)
+        elif self._iteration in [6, 7, 8]:				# For bricks to be placed horizontally
+            self._guarded_move_to_joint_position(self._h_pass_angles)
+    	else:
+		# Failsafe in case of user error when testing: this should not be reached in the demo
+    		rospy.logerr('Brick iteration exceeds expected value')
+    		return
+    	if self._sequence:						# Inform left arm
+    		pub.publish('right_at_center')
 
-.. note:: If this demo is being run on the physical DE NIRO robot, follow steps 1 through 8. If the demo is being run in simulation then use only steps 4,5 & 12
+Once the brick is moved to centre, The Right Arm, **right_arm.py**, publishes the 'right_at_center' status topic. The Left Arm is subscribed to this topic, and informs the Left Arm that the brick is in the 'passover position'.
 
-**Once the demo begins there is no need for further human input, the code operates autonomously using node topics.**
+
 
 5. Left arm places brick
 ========================
 
-Having set up the gazebo environment and spawned the baxter robot it is then necessary to initialise all our constituent nodes:
+The left arm always grabs the passover brick using the same orientation. After it has grabbed the brick it needs to place the brick in the correct position. 
 
-.. note:: If running the demo on the physical DE NIRO robot then ignore step 1. If running in simulation follow all steps below
+To place the brick in its predetermined position, a dictionary of brick positions is used “brickdict”. 
 
-1. Open a new terminal window to spawn the tables and bricks in simulation:
-
-	.. code-block:: bash
+	.. code-block:: python
 	
-		cd grasping_ws
-		./baxter.sh sim
-		rosrun baxter_sim_examples spawn_single.py 
+		brickdict = {
+		#brick : [xpos, ypos, zpos, xor, yor, zor, wor]
+			1 : [0.1, -1.80*bx , 0.6*bx     ],               
+			2 : [0.1, -1.35*bx , 0.6*bx     ],     
+			3 : [0.1, -0.90*bx , 0.6*bx     ],          
+			4 : [0.1, -0.45*bx , 0.6*bx     ],          
+			5 : [0.1,  0       , 0.6*bx     ],  
+			6 : [0.1, -1.33*bx , 0.8*bx+bz  ],  
+			7 : [0.1, -0.26*bx , 0.8*bx+bz  ],
+			8 : [0.1, -0.72*bx , 0.8*bx+2.2*bz]
+		}
 
-.. note:: If this demo is being run on the physical DE NIRO robot, follow steps 1 through 8. If the demo is being run in simulation then use only steps 4,5 & 12
+This dictionary gives the position the brick should be placed by using multiples of the brick dimensions (bx, by, bz) and the “calibrationpose”. This means the structure can be built from any starting home coordinates of the left arm. 
 
-**Once the demo begins there is no need for further human input, the code operates autonomously using node topics.**
+Depending on the iteration number of the brick, the algorithm selects the number of position. The orientation of the end-effector when placing the brick is also dependant on the iteration number. However, this is done through the right arm passing the brick in different orientations. 
+
+Using the calibration pose as the home coordinates for building, and the brick dictionary, the algorithm now has an exact position to place the brick. Using inverse kinematics of the “def ik_request(self, pose):” function, it moves to the “hoverpose”. This moves the left arm to the correct position, but a constant distance “self._hover_distance” upwards from it. This ensures that the end-effector does not place the brick with an awkward approach angle or speed. 
+
+Instead, the end-effector can now safely move the brick downwards into position. Having placed the brick in position, the left arm publishes thi to the left arm topic, and releases the brick. 
+
+
+6. Steps 1 to 12 are repeated until the tower is built
+======================================================
+
+The process of picking up, passing, and placing bricks is looped autonomously until the last brick from the predetermined piles is placed. 
+
+.. figure:: _static/sequence.png
+    :align: center
+    :figwidth: 30 em
+    :figclass: align-center
+
+
+The instructor, left arm, and right arm, are constantly publishing and listening so that they are aware when a function has been carried out. Once the first brick is placed, the left arm alerts the right to begin the sequence for the next brick. 
+
+The brick dictionary allows for the picking up of bricks from different piles, passing them with alternating orientations, and placing them in relative positions. This loops through until the last brick is placed (the iteration number exceeds 8) and the left arm publishes this. 
