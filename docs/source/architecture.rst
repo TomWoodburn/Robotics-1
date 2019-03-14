@@ -1,6 +1,6 @@
-**********************
-Algorithm Architecture
-**********************
+************
+Architecture
+************
 
 Node Functionality
 ==================

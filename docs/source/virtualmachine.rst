@@ -1,6 +1,6 @@
-*****************************
-Preparing the Virtual Machine
-*****************************
+*********************
+Virtual Machine Setup
+*********************
 
 The best performance in the simulation was achieved using the Baxter Robot environment, instead of the ROBOT DE NIRO environment. The Baxter Robot environment runs on the ROBOT DE NIRO virtual machine. 
 
