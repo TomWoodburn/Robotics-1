@@ -64,9 +64,3 @@ This documentation covers the installation, running and operation of the Multi A
    videos
    readthedocs
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
