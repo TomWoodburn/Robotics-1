@@ -316,19 +316,11 @@ The stored joint angles depend on the required orientation of the brick in the f
                     joint_angles = self.ik_request(brickpose)		
 
 
-Next, ``takebrick`` simply instructs the left arm to follow the final, linear motion to the brick and close it’s gripper. Once it is holding onto the brick, it lets the right arm know so that it can release. 
 
-.. code-block:: python
-
-		if self._sequence:
-    			pub.publish('brick_grabbed')
-
-
-
-4. ????????????
+4. Brick passed
 ===============
 
-At the end of step 2 the rigt arm publishes the string ``'right_at_Centre'`` to its topic.The left arm again reads and interprets this command via the ``interpret_rightarm`` function:
+At the end of step 2 the right arm publishes the string ``'right_at_Centre'`` to its topic. The left arm again reads and interprets this command via the ``interpret_rightarm`` function:
 
 .. code-block:: python
 		
@@ -535,7 +527,7 @@ Instead, the end-effector can now safely move the brick downwards into position.
 
 The process of picking up, passing, and placing bricks is looped autonomously until the last brick from the predetermined piles is placed. 
 
-.. figure:: _static/sequence.png
+.. figure:: _static/sequence.jpg
     :align: center
     :figwidth: 30 em
     :figclass: align-center
