@@ -114,7 +114,7 @@ def spawn_initial_stack(x=0.6725, y=-0.4, z=0.73, brick_reference_frame="world")
     for n in range(4):                          # Second stack of four bricks
         print (height+offset)
         position=Point(x, y, height+offset)
-        brick_name = 'Brick'+str(n+3)
+        brick_name = 'Brick'+str(n+4)
         spawn_brick(brick_name, brick_point = position)
         height = height + bz
         rospy.sleep(0.5)
