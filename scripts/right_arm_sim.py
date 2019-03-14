@@ -12,7 +12,7 @@ FOR USE IN SIMULATION WITH BAXTER ROBOT ONLY
 The right arm simulation file receives commands and operates the right arm of the BAXTER robot.
 It can be used in conjunction with the left_arm_sim.py and an instructor file.
 
-The right arm will pick up a brick from a predefined locationa and move it to a central pose to be passed to the left arm.
+The right arm will pick up a brick from a predefined locations and move it to a central pose to be passed to the left arm.
 
 Brick dimensions are: 0.2 x 0.09 x 0.062 metres
 '''
@@ -130,7 +130,7 @@ class RightArmControl(object):
      	self._cpose_angles = self._limb.joint_angles()
      	print("Right arm calibrated... frame origin at:\n{}".format(self._cpose))
 
-    def move_to_start(self:
+    def move_to_start(self):
     	# On initialisation, move to a pre-defined start location
         print('Moving the {0} arm to start pose...'.format(self._limb_name))
         self._guarded_move_to_joint_position(self._start_angles)
