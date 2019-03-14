@@ -34,6 +34,11 @@ The project includes:
 
 Future improvements to the project could include a final implementation of automated calibration as well as a smoother, more continuous trajectory. Additionally, the structure the robot picks up from and builds can be optimised. Overall, the main aims of this project were successfully achieved. The robot is faster than a child at picking up, swapping hands and placing the bricks in a structure.
 
+.. figure:: _static/passover.jpg
+    :align: center
+    :figwidth: 30 em
+    :figclass: align-center
+
 Documentation
 =============
 
@@ -42,17 +47,18 @@ This documentation covers the installation, running and operation of the Multi A
 
 .. toctree::
    :maxdepth: 2
-   :caption: Setup
+   :caption: Setup and operation
 
    virtualmachine
+   calibration
    initialisation
+   videos
 
 .. toctree::
    :maxdepth: 2
-   :caption: Operation
+   :caption: Algorithm Development
 
    architecture
-   calibration
    sequence
    otherfunctions
    simulationproblems
@@ -61,6 +67,5 @@ This documentation covers the installation, running and operation of the Multi A
    :maxdepth: 2
    :caption: Appendices
 
-   videos
    readthedocs
 
