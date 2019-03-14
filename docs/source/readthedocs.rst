@@ -75,6 +75,7 @@ Open the new html files as above
 Pushing Files Once Finished 
 
 Run : 
+
 .. code-block:: bash   
 
     make clean
